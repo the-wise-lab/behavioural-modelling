@@ -40,7 +40,7 @@ choice_func_vmap = jax.vmap(choice_from_action_p_single, in_axes=(None, 0, None)
 
 
 @jax.jit
-def choice_from_action_p(key: int, probs: ArrayLike, lapse: float = 0.0) -> int:
+def choice_from_action_p(key: jax.random.PRNGKey, probs: ArrayLike, lapse: float = 0.0) -> int:
     """
     Choose an action from a set of action probabilities. Can take probabilities
     in the form of an n-dimensional array, where the last dimension is the
