@@ -2,13 +2,14 @@ import jax
 import numpy as np
 import jax.numpy as jnp
 from typing import Tuple
+from ..decision_rules import softmax
+from ..utils import choice_from_action_p
 
 
 @jax.jit
 def asymmetric_rescorla_wagner_update(
     value: jax.typing.ArrayLike,
-    outcome: jax.typing.ArrayLike,
-    chosen: jax.typing.ArrayLike,
+    outcome_chosen: Tuple[jax.typing.ArrayLike, jax.typing.ArrayLike],
     alpha_p: jax.typing.ArrayLike,
     alpha_n: jax.typing.ArrayLike,
 ) -> Tuple[jax.typing.ArrayLike, jax.typing.ArrayLike]:
@@ -28,9 +29,9 @@ def asymmetric_rescorla_wagner_update(
     Args:
         value (jax.typing.ArrayLike): The current estimated value of a
             state or action.
-        outcome (jax.typing.ArrayLike): The actual reward received.
-        chosen (jax.typing.ArrayLike): Binary indicator of whether the
-            action was chosen (1) or not (0).
+        outcome_chosen (Tuple[float, float]): A tuple containing the actual
+            outcome and a binary value indicating whether the action was
+            chosen.
         alpha_p (jax.typing.ArrayLike): The learning rate used when the
             prediction error is positive.
         alpha_n (jax.typing.ArrayLike): The learning rate used when the
@@ -39,6 +40,9 @@ def asymmetric_rescorla_wagner_update(
     Returns:
         Tuple[float, float]: The updated value and the prediction error.
     """
+
+    # Unpack the outcome and the chosen action
+    outcome, chosen = outcome_chosen
 
     # Calculate the prediction error
     prediction_error = outcome - value
@@ -53,20 +57,18 @@ def asymmetric_rescorla_wagner_update(
     )
 
     # Update the value
-    value = value + alpha_t * prediction_error
+    updated_value = value + alpha_t * prediction_error
 
-    return value, prediction_error
+    return updated_value, (value, prediction_error)
 
 
-@jax.jit
 def asymmetric_rescorla_wagner_update_choice(
     value: jax.typing.ArrayLike,
-    outcome: jax.typing.ArrayLike,
+    outcome_key: Tuple[jax.typing.ArrayLike, jax.random.PRNGKey],
     alpha_p: float,
     alpha_n: float,
     temperature: float,
     n_actions: int,
-    key: jax.random.PRNGKey,
 ) -> np.ndarray:
     """
     Updates the value estimate using the asymmetric Rescorla-Wagner
@@ -74,25 +76,28 @@ def asymmetric_rescorla_wagner_update_choice(
 
     Args:
         value (jax.typing.ArrayLike): The current value estimate.
-        outcome (jax.typing.ArrayLike): The outcome of the action.
+        outcome_key (Tuple[jax.typing.ArrayLike, jax.random.PRNGKey]):
+            A tuple containing the outcome and the PRNG key.
         alpha_p (float): The learning rate for positive outcomes.
         alpha_n (float): The learning rate for negative outcomes.
         temperature (float): The temperature parameter for softmax function.
         n_actions (int): The number of actions to choose from.
-        key (jax.random.PRNGKey): The random key for the choice function.
 
     Returns:
-        Tuple[np.ndarray, Tuple[jax.typing.ArrayLike, np.ndarray, int, 
-        np.ndarray]]:
+        Tuple[np.ndarray, Tuple[jax.typing.ArrayLike, np.ndarray, int,
+            np.ndarray]]:
             - updated_value (jnp.ndarray): The updated value estimate.
-            - output_tuple (Tuple[jax.typing.ArrayLike, np.ndarray, int, 
-            np.ndarray]):
+            - output_tuple (Tuple[jax.typing.ArrayLike, np.ndarray, int,
+                np.ndarray]):
                 - value (jax.typing.ArrayLike): The original value estimate.
                 - choice_p (jnp.ndarray): The choice probabilities.
                 - choice (int): The chosen action.
                 - choice_array (jnp.ndarray): The chosen action in one-hot
-                  format.
+                    format.
     """
+
+    # Unpack outcome and key
+    outcome, key = outcome_key
 
     # Get choice probabilities
     choice_p = softmax(value[None, :], temperature).squeeze()
@@ -107,10 +112,14 @@ def asymmetric_rescorla_wagner_update_choice(
     # Get the outcome and update the value estimate
     updated_value, prediction_error = asymmetric_rescorla_wagner_update(
         value,
-        choice_array,
-        outcome,
+        (outcome, choice_array),
         alpha_p,
         alpha_n,
     )
 
     return updated_value, (value, choice_p, choice_array, prediction_error)
+
+
+asymmetric_rescorla_wagner_update_choice = jax.jit(
+    asymmetric_rescorla_wagner_update_choice, static_argnums=(5,)
+)
