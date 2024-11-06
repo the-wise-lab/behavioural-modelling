@@ -16,6 +16,14 @@ cd behavioural-modelling
 pip install . -e
 ```
 
+This will install an editable version of the package, meaning that you can modify the code and the changes will be reflected in the package.
+
+Alternatively, you can install the package directly from GitHub using `pip`:
+
+```bash
+pip install git+https://github.com/the-wise-lab/behavioural-modelling.git
+```
+
 It can then be used as a regular Python package.
 
 ## Examples
