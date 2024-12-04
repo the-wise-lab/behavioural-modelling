@@ -5,26 +5,44 @@ from typing import Tuple
 
 
 def get_state_action_values(
-    sas: jnp.ndarray, reward: jnp.ndarray, discount: float, values: jnp.ndarray
+    s: int,
+    n_actions: int,
+    sas: jnp.ndarray,
+    reward: jnp.ndarray,
+    discount: float,
+    values: jnp.ndarray,
 ) -> jnp.ndarray:
     """
-    Calculates the value of each action for all states in a vectorized manner.
+    Calculates the value of each action for a given state. Used within the main
+    value iteration loop.
+
+    Reward is typically conceived of as resulting from taking action A in state
+    S. Here, we for the sake of simplicity, we assume that the reward results
+    from visiting state S' - that is, taking action A in state S isn't
+    rewarding in itself, but the reward received is dependent on the reward
+    present in state S'.
 
     Args:
-        sas (jnp.ndarray): State-action-state transition probabilities of shape
-            (n_states, n_actions, n_states)
-        reward (jnp.ndarray): Reward at each state
+        s (int): State ID
+        n_actions (int): Number of possible actions
+        sas (np.ndarray): State, action, state transition function
+        reward (np.ndarray): Reward available at each state
         discount (float): Discount factor
-        values (jnp.ndarray): Current estimate of value function
+        values (np.ndarray): Current estimate of value function
+
 
     Returns:
-        jnp.ndarray: Estimated action values of shape (n_states, n_actions)
+        np.ndarray: Estimated value of each state
     """
-    # Compute the expected reward for each state-action pair
-    expected_rewards = reward + discount * values  # shape (n_states,)
-    action_values = jnp.einsum(
-        "san,n->sa", sas, expected_rewards
-    )  # shape (n_states, n_actions)
+
+    def action_update(s, a, sas, reward, discount, values):
+        p_sprime = sas[s, a, :]
+        return jnp.dot(p_sprime, reward + discount * values)
+
+    action_values = jax.vmap(
+        action_update, in_axes=(None, 0, None, None, None, None)
+    )(s, jnp.arange(n_actions, dtype=int), sas, reward, discount, values)
+
     return action_values
 
 
@@ -33,38 +51,68 @@ def state_value_iterator(
     reward: jnp.ndarray,
     discount: float,
     sas: jnp.ndarray,
+    soft: bool = False,
 ) -> Tuple[jnp.ndarray, float, jnp.ndarray]:
     """
-    Performs one iteration of the value iteration algorithm.
+    Core value iteration function - calculates value function for the MDP and
+    returns q-values for each action in each state.
+
+    This function just runs one iteration of the value iteration algorithm.
+
+    "Soft" value iteration can optionally be performed. This essentially
+    involves taking the softmax of action values rather than the max, and is
+    useful for inverse reinforcement learning (see Bloem & Bambos, 2014).
 
     Args:
-        values (jnp.ndarray): Current estimate of the value function
-        reward (jnp.ndarray): Reward at each state
+        values (np.ndarray): Current estimate of the value function
+        reward (np.ndarray): Reward at each state (i.e. features x reward
+            function)
         discount (float): Discount factor
-        sas (jnp.ndarray): State-action-state transition probabilities
+        sas (np.ndarray): State, action, state transition function
+        soft (bool, optional): If True, this implements "soft" value iteration
+            rather than standard value iteration. Defaults to False.
 
     Returns:
-        Tuple[jnp.ndarray, float, jnp.ndarray]: Updated value function, delta,
-        and action values
+        Tuple[np.ndarray, float, np.ndarray]: Returns new estimate of the value
+            function, new delta, and new q_values
     """
-    old_values = values
-    action_values = get_state_action_values(sas, reward, discount, values)
+    n_states, n_actions = sas.shape[:2]
+    q_values = jnp.zeros((n_states, n_actions))
 
-    # Identify valid actions
-    valid_actions = sas.sum(axis=2) > 0  # shape (n_states, n_actions)
+    def scan_fn(values_delta, s):
 
-    # Mask invalid actions
-    action_values = jnp.where(valid_actions, action_values, -jnp.inf)
+        values, delta = values_delta
 
-    # Standard value iteration using max over actions
-    values = jnp.max(action_values, axis=1)
+        v = values[s]  # Current value estimate for state `s`
+        action_values = get_state_action_values(
+            s, n_actions, sas, reward, discount, values
+        )
 
-    # Compute delta as the maximum change across all states
-    delta = jnp.max(jnp.abs(values - old_values))
+        if not soft:
+            new_value = jnp.max(action_values)
+        else:
+            new_value = jnp.log(jnp.sum(jnp.exp(action_values)) + 1e-200)
 
-    q_values = action_values
+        # Update Q-values for state `s`
+        q_values_s = action_values
 
-    return values, delta, q_values
+        # Update delta
+        delta = jnp.abs(new_value - v)
+
+        # Update value for state `s`
+        values = values.at[s].set(new_value)
+
+        return (values, delta), q_values_s
+
+    # Perform the sequential scan
+    (new_values, final_delta), all_q_values = jax.lax.scan(
+        scan_fn, (values, 0), jnp.arange(n_states)
+    )
+
+    # Combine all Q-values into a single array
+    q_values = q_values.at[:, :].set(all_q_values)
+
+    return new_values, final_delta, q_values
 
 
 def solve_value_iteration(
@@ -82,7 +130,8 @@ def solve_value_iteration(
     Args:
         n_states (int): Number of states
         n_actions (int): Number of actions
-        reward_function (jnp.ndarray): Reward function (i.e., reward at each state)
+        reward_function (jnp.ndarray): Reward function (i.e., reward at each
+            state)
         max_iter (int): Maximum number of iterations
         discount (float): Discount factor
         sas (jnp.ndarray): State-action-state transition probabilities
@@ -90,7 +139,7 @@ def solve_value_iteration(
 
     Returns:
         Tuple[jnp.ndarray, jnp.ndarray]: Final value function and action values
-        (Q-values)
+            (Q-values)
     """
 
     values = jnp.zeros(n_states)
