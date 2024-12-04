@@ -13,7 +13,7 @@ For example:
 ```bash
 git clone https://github.com/the-wise-lab/behavioural-modelling.git
 cd behavioural-modelling
-pip install . -e
+pip install -e . 
 ```
 
 This will install an editable version of the package, meaning that you can modify the code and the changes will be reflected in the package.

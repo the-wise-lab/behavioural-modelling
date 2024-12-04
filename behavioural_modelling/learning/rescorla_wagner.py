@@ -263,7 +263,7 @@ def asymmetric_volatile_dynamic_rescorla_wagner_update_choice(
     outcome, key, volatility_indicator = outcome_key_volatility
 
     # Get choice probabilities
-    choice_p = softmax(new_value[None, :], temperature).squeeze()
+    choice_p = softmax(value[None, :], temperature).squeeze()
 
     # Get choice
     choice = choice_from_action_p(key, choice_p)
