@@ -71,7 +71,6 @@ def solve_value_iteration(
     n_states: int,
     n_actions: int,
     reward_function: jnp.ndarray,
-    features: jnp.ndarray,
     max_iter: int,
     discount: float,
     sas: jnp.ndarray,
@@ -83,8 +82,7 @@ def solve_value_iteration(
     Args:
         n_states (int): Number of states
         n_actions (int): Number of actions
-        reward_function (jnp.ndarray): Reward function coefficients
-        features (jnp.ndarray): Feature matrix of shape (n_features, n_states)
+        reward_function (jnp.ndarray): Reward function (i.e., reward at each state)
         max_iter (int): Maximum number of iterations
         discount (float): Discount factor
         sas (jnp.ndarray): State-action-state transition probabilities
@@ -96,7 +94,6 @@ def solve_value_iteration(
     """
 
     values = jnp.zeros(n_states)
-    reward = jnp.dot(reward_function.astype(jnp.float64), features)
 
     def cond_fun(carry):
         values, delta, iter_num, q_values = carry
@@ -105,7 +102,7 @@ def solve_value_iteration(
     def body_fun(carry):
         values, _, iter_num, _ = carry
         values, delta, q_values = state_value_iterator(
-            values, reward, discount, sas
+            values, reward_function, discount, sas
         )
         iter_num += 1
         return values, delta, iter_num, q_values
