@@ -1,0 +1,63 @@
+site_name: Behavioural Modelling
+
+plugins:
+  - mkdocstrings:
+      default_handler: python
+      handlers:
+        python:
+          import:
+          - https://docs.python.org/3/objects.inv
+          - https://installer.readthedocs.io/en/stable/objects.inv  # demonstration purpose in the docs
+          - https://mkdocstrings.github.io/autorefs/objects.inv
+          - https://www.mkdocs.org/objects.inv
+          - https://python-markdown.github.io/objects.inv
+          paths: [.]
+          options:
+            docstring_options:
+              ignore_init_summary: true
+            docstring_section_style: list
+            filters: ["!^_"]
+            # heading_level: 1
+            inherited_members: true
+            merge_init_into_class: true
+            parameter_headings: true
+            separate_signature: true
+            show_root_heading: true
+            show_root_full_path: false
+            show_signature_annotations: true
+            show_symbol_type_heading: true
+            show_symbol_type_toc: true
+            signature_crossrefs: true
+            summary: true
+            show_source: true
+
+nav:
+  - Home: index.md
+  - API Reference:
+    - Learning:
+      - Beta Models: reference/learning/beta_models.md
+      - Rescorla-Wagner: reference/learning/rescorla_wagner.md
+    - Planning:
+      - Dynamic Programming: reference/planning/dynamic_programming.md
+    - Decision Rules: reference/decision_rules.md
+    - Utils: reference/utils.md
+
+theme:
+  name: "material"
+  palette: 
+    - scheme: default
+      primary: blue
+      toggle:
+        icon: material/brightness-2
+        name: Switch to dark mode
+    - scheme: slate
+      primary: blue
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+
+extra_css:
+- css/mkdocstrings.css
+
+repo_url: https://github.com/the-wise-lab/behavioural-modelling
+repo_name: the-wise-lab/behavioural-modelling
