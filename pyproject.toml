@@ -1,0 +1,23 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "behavioural_modelling"
+version = "0.1.0"
+description = "Behavioral modelling tools including Rescorla-Wagner learning"
+requires-python = ">=3.8"
+dependencies = [
+    "jax",
+    "jaxlib",
+    "numpy",
+]
+
+[project.optional-dependencies]
+test = [
+    "pytest",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
