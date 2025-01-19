@@ -1,3 +1,5 @@
+[![Tests](https://github.com/{username}/{repository-name}/actions/workflows/tests.yml/badge.svg)](https://github.com/{username}/{repository-name}/actions/workflows/tests.yml)
+
 # Behavioural models
 
 This repository contains a selection of useful functions for modelling of behaviour in learning and decision-making tasks.
