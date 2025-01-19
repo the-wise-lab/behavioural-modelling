@@ -1,4 +1,4 @@
-[![Tests](https://github.com/{username}/{repository-name}/actions/workflows/tests.yml/badge.svg)](https://github.com/{username}/{repository-name}/actions/workflows/tests.yml)
+[![Tests](https://github.com/the-wise-lab/behavioural-modelling/actions/workflows/tests.yml/badge.svg)](https://github.com/the-wise-lab/behavioural-modelling/actions/workflows/tests.yml)
 
 # Behavioural models
 
