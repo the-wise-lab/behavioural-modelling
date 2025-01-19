@@ -110,7 +110,7 @@ def asymmetric_rescorla_wagner_update_choice(
     choice_array = choice_array.at[choice].set(1)
 
     # Get the outcome and update the value estimate
-    updated_value, prediction_error = asymmetric_rescorla_wagner_update(
+    updated_value, (_, prediction_error) = asymmetric_rescorla_wagner_update(
         value,
         (outcome, choice_array),
         alpha_p,
@@ -170,11 +170,13 @@ def asymmetric_volatile_rescorla_wagner_update(
             interaction between volatility and prediction error sign.
 
     Returns:
-        Tuple[jax.typing.ArrayLike, Tuple[jax.typing.ArrayLike, jax.typing.ArrayLike]]:
+        Tuple[jax.typing.ArrayLike, Tuple[jax.typing.ArrayLike,
+            jax.typing.ArrayLike]]:
             - updated_value (jax.typing.ArrayLike): The updated value estimate.
             - output_tuple (Tuple[jax.typing.ArrayLike, jax.typing.ArrayLike]):
                 - value (jax.typing.ArrayLike): The original value estimate.
-                - prediction_error (jax.typing.ArrayLike): The prediction error.
+                - prediction_error (jax.typing.ArrayLike): The prediction
+                  error.
     """
 
     # Unpack the outcome and the chosen action
@@ -372,6 +374,6 @@ def asymmetric_volatile_rescorla_wagner_single_value_update_choice(
 
 
 # Jit compile function
-asymmetric_volatile_dynamic_rescorla_wagner_update_choice = jax.jit(
-    asymmetric_volatile_dynamic_rescorla_wagner_update_choice,
+asymmetric_volatile_rescorla_wagner_single_value_update_choice = jax.jit(
+    asymmetric_volatile_rescorla_wagner_single_value_update_choice,
 )
