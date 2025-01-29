@@ -9,7 +9,7 @@ from ..utils import choice_from_action_p
 @jax.jit
 def asymmetric_rescorla_wagner_update(
     value: jax.typing.ArrayLike,
-    outcome_chosen: Tuple[jax.typing.ArrayLike, jax.typing.ArrayLike],
+    outcome_chosen: Tuple[Union[float, jax.typing.ArrayLike], jax.typing.ArrayLike],
     alpha_p: jax.typing.ArrayLike,
     alpha_n: jax.typing.ArrayLike,
 ) -> Tuple[jax.typing.ArrayLike, jax.typing.ArrayLike]:
@@ -29,9 +29,10 @@ def asymmetric_rescorla_wagner_update(
     Args:
         value (jax.typing.ArrayLike): The current estimated value of a
             state or action.
-        outcome_chosen (Tuple[float, float]): A tuple containing the actual
-            outcome and a binary value indicating whether the action was
-            chosen.
+        outcome_chosen (Tuple[Union[float, jax.typing.ArrayLike],
+            jax.typing.ArrayLike]): A tuple containing the actual outcome
+            (either as an array or a single value) and a binary array
+            indicating which action(s) were chosen. 
         alpha_p (jax.typing.ArrayLike): The learning rate used when the
             prediction error is positive.
         alpha_n (jax.typing.ArrayLike): The learning rate used when the
