@@ -795,3 +795,51 @@ def test_choice_array_format():
     assert choice_array.shape == (2,)
     assert jnp.sum(choice_array) == 1
     assert jnp.all(jnp.logical_or(choice_array == 0, choice_array == 1))
+
+def test_asymmetric_rescorla_wagner_counterfactual_default():
+    value = jnp.array([0.5, 0.5])
+    outcome_chosen = (jnp.array(1.0), jnp.array([1.0, 0.0]))
+    alpha_p = jnp.array(0.1)
+    alpha_n = jnp.array(0.2)
+
+    updated_value, (old_value, prediction_error) = asymmetric_rescorla_wagner_update(
+        value, outcome_chosen, alpha_p, alpha_n
+    )
+    
+    # Chosen action should update toward outcome
+    assert np.isclose(updated_value[0], 0.55)  # 0.5 + 0.1 * (1.0 - 0.5)
+    # Unchosen action should not be updated by default
+    assert np.isclose(updated_value[1], 0.5)   # 0.5 + 0.2 * (0.0 - 0.5)
+
+def test_asymmetric_rescorla_wagner_custom_counterfactual_without_updating_all_options():
+    value = jnp.array([0.5, 0.5])
+    outcome_chosen = (jnp.array(1.0), jnp.array([1.0, 0.0]))
+    alpha_p = jnp.array(0.1)
+    alpha_n = jnp.array(0.2)
+    counterfactual_value = 0.3
+
+    updated_value, (old_value, prediction_error) = asymmetric_rescorla_wagner_update(
+        value, outcome_chosen, alpha_p, alpha_n, counterfactual_value=counterfactual_value
+    )
+
+    # Chosen action updates normally
+    assert np.isclose(updated_value[0], 0.55)
+    # Unchosen action shouldn't update because update_all_options=False
+    assert np.isclose(updated_value[1], 0.5)  # 0.5 + 0.2 * (0.3 - 0.5)
+
+def test_asymmetric_rescorla_wagner_update_all_options():
+    value = jnp.array([0.5, 0.5])
+    outcome_chosen = (jnp.array(1.0), jnp.array([1.0, 0.0]))
+    alpha_p = jnp.array(0.1)
+    alpha_n = jnp.array(0.2)
+    counterfactual_value = 0.3
+
+    updated_value, (old_value, prediction_error) = asymmetric_rescorla_wagner_update(
+        value, outcome_chosen, alpha_p, alpha_n, 
+        counterfactual_value=counterfactual_value,
+        update_all_options=True
+    )
+
+    # Both actions should update, even the unchosen one
+    assert np.isclose(updated_value[0], 0.55)  # Toward actual outcome
+    assert np.isclose(updated_value[1], 0.46)  # Toward counterfactual value
