@@ -1,7 +1,7 @@
 import jax
 import numpy as np
 import jax.numpy as jnp
-from typing import Tuple
+from typing import Tuple, Union
 from ..decision_rules import softmax
 from ..utils import choice_from_action_p
 
@@ -9,9 +9,13 @@ from ..utils import choice_from_action_p
 @jax.jit
 def asymmetric_rescorla_wagner_update(
     value: jax.typing.ArrayLike,
-    outcome_chosen: Tuple[Union[float, jax.typing.ArrayLike], jax.typing.ArrayLike],
+    outcome_chosen: Tuple[
+        Union[float, jax.typing.ArrayLike], jax.typing.ArrayLike
+    ],
     alpha_p: jax.typing.ArrayLike,
     alpha_n: jax.typing.ArrayLike,
+    counterfactual_value: float = 0,
+    update_all_options: bool = False,
 ) -> Tuple[jax.typing.ArrayLike, jax.typing.ArrayLike]:
     """
     Updates the estimated value of a state or action using the Asymmetric
@@ -26,17 +30,25 @@ def asymmetric_rescorla_wagner_update(
     Value estimates are only updated for chosen actions. For unchosen
     actions, the prediction error is set to 0.
 
+    Counterfactualy updating can be used to set the value of unchosen
+    actions to a specific value. By default, this is 0.
+
     Args:
         value (jax.typing.ArrayLike): The current estimated value of a
             state or action.
         outcome_chosen (Tuple[Union[float, jax.typing.ArrayLike],
             jax.typing.ArrayLike]): A tuple containing the actual outcome
             (either as an array or a single value) and a binary array
-            indicating which action(s) were chosen. 
+            indicating which action(s) were chosen.
         alpha_p (jax.typing.ArrayLike): The learning rate used when the
             prediction error is positive.
         alpha_n (jax.typing.ArrayLike): The learning rate used when the
             prediction error is negative.
+        counterfactual_value (float, optional): The counterfactual value to use
+            for unchosen actions. Defaults to 0.
+        update_all_options (bool, optional): Whether to update the value
+            estimates for all options, regardless of whether they were
+            chosen. Defaults to False.
 
     Returns:
         Tuple[float, float]: The updated value and the prediction error.
@@ -44,6 +56,16 @@ def asymmetric_rescorla_wagner_update(
 
     # Unpack the outcome and the chosen action
     outcome, chosen = outcome_chosen
+
+    # Calculate counterfactual
+    # This will be equal to outcome for chosen actions and 0 for unchosen
+    # actions
+    outcome = outcome * chosen
+    # This will add a value equal to counterfactual_value for unchosen options
+    outcome += counterfactual_value * (1 - chosen)
+
+    # If updating all options, set chosen to 1
+    chosen = (chosen * (1 - update_all_options)) + (1 * update_all_options)
 
     # Calculate the prediction error
     prediction_error = outcome - value
@@ -70,10 +92,15 @@ def asymmetric_rescorla_wagner_update_choice(
     alpha_n: float,
     temperature: float,
     n_actions: int,
+    counterfactual_value: float = 0,
+    update_all_options: bool = False,
 ) -> np.ndarray:
     """
     Updates the value estimate using the asymmetric Rescorla-Wagner
     algorithm, and chooses an option based on the softmax function.
+
+    See `asymmetric_rescorla_wagner_update` for details on the learning
+    rule.
 
     Args:
         value (jax.typing.ArrayLike): The current value estimate.
@@ -83,6 +110,10 @@ def asymmetric_rescorla_wagner_update_choice(
         alpha_n (float): The learning rate for negative outcomes.
         temperature (float): The temperature parameter for softmax function.
         n_actions (int): The number of actions to choose from.
+        counterfactual_value (float, optional): The counterfactual value to use
+            for unchosen actions. Defaults to 0.
+        update_all_options (bool, optional): Whether to update the value
+            estimates for all options, regardless of whether they were
 
     Returns:
         Tuple[np.ndarray, Tuple[jax.typing.ArrayLike, np.ndarray, int,
@@ -116,6 +147,8 @@ def asymmetric_rescorla_wagner_update_choice(
         (outcome, choice_array),
         alpha_p,
         alpha_n,
+        counterfactual_value=counterfactual_value,
+        update_all_options=update_all_options,
     )
 
     return updated_value, (value, choice_p, choice_array, prediction_error)
