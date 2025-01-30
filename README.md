@@ -35,6 +35,10 @@ It can then be used as a regular Python package:
 from behavioural_modelling.decision_rules import softmax
 ```
 
+## Documentation
+
+Documentation can be found [here](https://behavioural-modelling.thewiselab.org).
+
 ## Examples
 
 Example Jupyter notebooks can be found in the `examples` directory.
