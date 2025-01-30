@@ -13,7 +13,7 @@ def asymmetric_rescorla_wagner_update(
     ],
     alpha_p: jax.typing.ArrayLike,
     alpha_n: jax.typing.ArrayLike,
-    counterfactual_value: callable = lambda x: -(1 - x),
+    counterfactual_value: callable = lambda x, y: (1 - x) * (1 - y),
     update_all_options: bool = False,
 ) -> Tuple[jax.typing.ArrayLike, jax.typing.ArrayLike]:
     """
@@ -33,8 +33,8 @@ def asymmetric_rescorla_wagner_update(
     according to a function of the value of chosen actions. This can be useful
     in cases where the value of unchosen actions should be set to a specific
     value, such as the negative of the value of chosen actions. By default this
-    is set to `lambda x: -(1 - x)`, which sets the value of unchosen actions to
-    the negative of the value of chosen actions.
+    is set to `x, y: (1 - x) * (1 - y)`, which sets the value of unchosen
+    actions to the negative of the value of chosen actions.
 
     Args:
         value (jax.typing.ArrayLike): The current estimated value of a
@@ -51,29 +51,29 @@ def asymmetric_rescorla_wagner_update(
             to use for unchosen actions. This should be provided as a
             callable function that returns a value. This will have
             no effect if `update_all_options` is set to False.
-            The function takes as input an array calculated as `outcome *
-            chosen`, representing the values for chosen options as the outcome
-            value and unchosen options as 0.
-            Defaults to `lambda x: -(1 - x)`, which sets the value of
-            unchosen actions to the negative of the value of chosen
-            actions.
+            The function takes as input the values of `outcome` and `chosen`
+            (i.e., the two elements of the `outcome_chosen` argument).
+            Defaults to `lambda x, y: (1 - x) * (1 - y)`, which assumes
+            outcomes are binary (0 or 1), and sets the value of unchosen
+            actions to complement the value of chosen actions (i.e.,
+            a chosen value of 1 will set the unchosen value to 0 and
+            vice versa).
         update_all_options (bool, optional): Whether to update the value
             estimates for all options, regardless of whether they were
             chosen. Defaults to False.
 
     Returns:
-        Tuple[float, float]: The updated value and the prediction error.
+        Tuple[jax.typing.ArrayLike, jax.typing.ArrayLike]: The updated value
+            and the prediction error.
     """
 
     # Unpack the outcome and the chosen action
     outcome, chosen = outcome_chosen
 
-    # Calculate counterfactual
-    # This will be equal to outcome for chosen actions and 0 for unchosen
-    # actions
-    outcome = outcome * chosen
-    # This will add a value equal to counterfactual for unchosen options
-    outcome += counterfactual_value(outcome) * (1 - chosen)
+    # Calculate counterfactual for unchosen options
+    counterfactual = counterfactual_value(outcome, chosen) * (1 - chosen)
+    # Add in the value of the chosen option
+    outcome = outcome * chosen + counterfactual
 
     # If updating all options, set chosen to 1
     chosen = (chosen * (1 - update_all_options)) + (1 * update_all_options)
@@ -108,7 +108,7 @@ def asymmetric_rescorla_wagner_update_choice(
     alpha_n: float,
     temperature: float,
     n_actions: int,
-    counterfactual_value: Union[float, callable] = lambda x: -(1 - x),
+    counterfactual_value: callable = lambda x, y: (1 - x) * (1 - y),
     update_all_options: bool = False,
 ) -> np.ndarray:
     """
@@ -126,16 +126,17 @@ def asymmetric_rescorla_wagner_update_choice(
         alpha_n (float): The learning rate for negative outcomes.
         temperature (float): The temperature parameter for softmax function.
         n_actions (int): The number of actions to choose from.
-        counterfactual_value (Union[float, callable], optional): The value
-            to use for unchosen actions. This can be a single value or a
+        counterfactual_value (callable], optional): The value
+            to use for unchosen actions. This should be provided as a
             callable function that returns a value. This will have
             no effect if `update_all_options` is set to False.
-            The function takes as input an array calculated as `outcome *
-            chosen`, representing the values for chosen options as the outcome
-            value and unchosen options as 0.
-            Defaults to lambda x: -(1 - x), which sets the value of
-            unchosen actions to the negative of the value of chosen
-            actions.
+            The function takes as input the values of `outcome` and `chosen`
+            (i.e., the two elements of the `outcome_chosen` argument).
+            Defaults to `lambda x, y: (1 - x) * (1 - y)`, which assumes
+            outcomes are binary (0 or 1), and sets the value of unchosen
+            actions to complement the value of chosen actions (i.e.,
+            a chosen value of 1 will set the unchosen value to 0 and
+            vice versa).
         update_all_options (bool, optional): Whether to update the value
             estimates for all options, regardless of whether they were
 

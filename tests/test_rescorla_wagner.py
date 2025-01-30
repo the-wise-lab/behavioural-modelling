@@ -816,7 +816,7 @@ def test_asymmetric_rescorla_wagner_custom_counterfactual_without_updating_all_o
     outcome_chosen = (jnp.array(1.0), jnp.array([1.0, 0.0]))
     alpha_p = jnp.array(0.1)
     alpha_n = jnp.array(0.2)
-    counterfactual_value = lambda x: 0.3
+    counterfactual_value = lambda x, y: -x  # Opposite of chosen value
 
     updated_value, (old_value, prediction_error) = asymmetric_rescorla_wagner_update(
         value, outcome_chosen, alpha_p, alpha_n, counterfactual_value=counterfactual_value
@@ -832,7 +832,7 @@ def test_asymmetric_rescorla_wagner_update_all_options():
     outcome_chosen = (jnp.array(1.0), jnp.array([1.0, 0.0]))
     alpha_p = jnp.array(0.1)
     alpha_n = jnp.array(0.2)
-    counterfactual_value = lambda x: 0.3
+    counterfactual_value = lambda x, y: (1 - x) * (1 - y)  # SHould be 0
 
     updated_value, (old_value, prediction_error) = asymmetric_rescorla_wagner_update(
         value, outcome_chosen, alpha_p, alpha_n, 
@@ -842,30 +842,31 @@ def test_asymmetric_rescorla_wagner_update_all_options():
 
     # Both actions should update, even the unchosen one
     assert np.isclose(updated_value[0], 0.55)  # Toward actual outcome
-    assert np.isclose(updated_value[1], 0.46)  # Toward counterfactual value
+    assert np.isclose(updated_value[1], 0.4)  # Toward counterfactual value
 
-def test_asymmetric_rescorla_wagner_negative_counterfactual():
-    value = jnp.array([0.5, 0.5])
+def test_asymmetric_rescorla_wagner_update_all_options_opposite_signed_outcome():
+    value = jnp.array([0.0, 0.0])
     outcome_chosen = (jnp.array(1.0), jnp.array([1.0, 0.0]))
     alpha_p = jnp.array(0.1)
     alpha_n = jnp.array(0.2)
-    counterfactual_value = lambda x: -(1 - x)  # Opposite of chosen value
-    
+    counterfactual_value = lambda x, y: -x  # Should be -1
+
     updated_value, (old_value, prediction_error) = asymmetric_rescorla_wagner_update(
-        value, outcome_chosen, alpha_p, alpha_n,
+        value, outcome_chosen, alpha_p, alpha_n, 
         counterfactual_value=counterfactual_value,
         update_all_options=True
     )
-    
-    assert np.isclose(updated_value[0], 0.55)  # Normal update
-    assert np.isclose(updated_value[1], 0.2)   # Update toward -1.0
+
+    # Both actions should update, even the unchosen one
+    assert np.isclose(updated_value[0], 0.1)  # Toward actual outcome
+    assert np.isclose(updated_value[1], -0.2)  # Toward counterfactual value
 
 def test_asymmetric_rescorla_wagner_scaled_counterfactual():
     value = jnp.array([0.5, 0.5])
     outcome_chosen = (jnp.array(1.0), jnp.array([1.0, 0.0]))
     alpha_p = jnp.array(0.1)
     alpha_n = jnp.array(0.2)
-    counterfactual_value = lambda x: 0.25 * (1 - x)  # 25% of chosen value
+    counterfactual_value = lambda x, y: 0.25 * x  # 25% of chosen value
     
     updated_value, (old_value, prediction_error) = asymmetric_rescorla_wagner_update(
         value, outcome_chosen, alpha_p, alpha_n,
@@ -881,7 +882,7 @@ def test_asymmetric_rescorla_wagner_array_update_all_options():
     outcome_chosen = (jnp.array([1.0, 0.7, 0.3]), jnp.array([1.0, 0.0, 0.0]))
     alpha_p = jnp.array(0.1)
     alpha_n = jnp.array(0.2)
-    counterfactual_value = lambda x: 0.3 * jnp.ones_like(x)
+    counterfactual_value = lambda x, y: 0.3 * jnp.ones_like(x)
 
     updated_value, (old_value, prediction_error) = asymmetric_rescorla_wagner_update(
         value, outcome_chosen, alpha_p, alpha_n, 
@@ -894,11 +895,11 @@ def test_asymmetric_rescorla_wagner_array_update_all_options():
     assert np.isclose(updated_value[2], 0.46)  # Toward 0.3
 
 def test_asymmetric_rescorla_wagner_array_negative_counterfactual():
-    value = jnp.array([0.5, 0.5, 0.5])
+    value = jnp.array([0.0, 0.0, 0.0])
     outcome_chosen = (jnp.array([1.0, 0.0, 0.5]), jnp.array([1.0, 0.0, 0.0]))
     alpha_p = jnp.array(0.1)
     alpha_n = jnp.array(0.2)
-    counterfactual_value = lambda x: -(1 - x)  # Opposite of chosen values
+    counterfactual_value = lambda x, y: -x  # Opposite of chosen values
 
     updated_value, (old_value, prediction_error) = asymmetric_rescorla_wagner_update(
         value, outcome_chosen, alpha_p, alpha_n,
@@ -906,16 +907,16 @@ def test_asymmetric_rescorla_wagner_array_negative_counterfactual():
         update_all_options=True
     )
 
-    assert np.isclose(updated_value[0], 0.55) 
-    assert np.isclose(updated_value[1], 0.2)    
-    assert np.isclose(updated_value[2], 0.2)  
+    assert np.isclose(updated_value[0], 0.1) 
+    assert np.isclose(updated_value[1], 0.0)    
+    assert np.isclose(updated_value[2], -0.1)  
 
 def test_asymmetric_rescorla_wagner_array_scaled_counterfactual():
     value = jnp.array([0.5, 0.5, 0.5])
     outcome_chosen = (jnp.array([1.0, 0.8, 0.6]), jnp.array([1.0, 0.0, 0.0]))
     alpha_p = jnp.array(0.1)
     alpha_n = jnp.array(0.2)
-    counterfactual_value = lambda x: 0.25 * (1 - x)   # 25% of chosen values
+    counterfactual_value = lambda x, y: 0.25 * x  # 25% of chosen values
 
     updated_value, (old_value, prediction_error) = asymmetric_rescorla_wagner_update(
         value, outcome_chosen, alpha_p, alpha_n,
@@ -924,5 +925,5 @@ def test_asymmetric_rescorla_wagner_array_scaled_counterfactual():
     )
 
     assert np.isclose(updated_value[0], 0.55)  
-    assert np.isclose(updated_value[1], 0.45)  
-    assert np.isclose(updated_value[2], 0.45)  
+    assert np.isclose(updated_value[1], 0.44)  
+    assert np.isclose(updated_value[2], 0.43)  
