@@ -1,5 +1,5 @@
 
-# Behavioural models
+# Computational models of learning and decision-making
 
 [![Tests](https://github.com/the-wise-lab/behavioural-modelling/actions/workflows/tests.yml/badge.svg)](https://github.com/the-wise-lab/behavioural-modelling/actions/workflows/tests.yml)
 [![Documentation](https://img.shields.io/badge/docs-latest-blue.svg)](https://behavioural-modelling.thewiselab.org)
