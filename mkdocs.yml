@@ -30,6 +30,10 @@ plugins:
             signature_crossrefs: true
             summary: true
             show_source: true
+  - search
+  - mkdocs-jupyter:
+      include_source: true
+      ignore_h1_titles: true
 
 nav:
   - Home: index.md
@@ -41,6 +45,14 @@ nav:
       - Dynamic Programming: reference/planning/dynamic_programming.md
     - Decision Rules: reference/decision_rules.md
     - Utils: reference/utils.md
+  - Examples:
+    - Learning:
+      - Beta Model Examples: examples/learning/beta_learning_models.ipynb
+    - Planning:
+      - Dynamic Programming Examples: examples/planning/value_iteration.ipynb
+    - Making decision:
+      - Simulating choices: examples/decisions/simulating_choices.ipynb
+      - Decision rules: examples/decisions/decision_rules.ipynb
 
 theme:
   name: "material"
