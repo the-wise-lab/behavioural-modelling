@@ -2,6 +2,8 @@
 # Behavioural models
 
 [![Tests](https://github.com/the-wise-lab/behavioural-modelling/actions/workflows/tests.yml/badge.svg)](https://github.com/the-wise-lab/behavioural-modelling/actions/workflows/tests.yml)
+[![Documentation](https://img.shields.io/badge/docs-latest-blue.svg)](https://behavioural-modelling.thewiselab.org)
+[![Python](https://img.shields.io/badge/python-≥3.8-blue.svg)](https://www.python.org)
 
 This repository contains a selection of useful functions for modelling of behaviour in learning and decision-making tasks.
 
@@ -9,7 +11,13 @@ All of these functions are written on top of [JAX](jax.readthedocs.io/). As a re
 
 ## Installation
 
-To install this package, clone the repository and run `pip install . -e` from the root directory.
+You can install the package directly from GitHub using `pip`:
+
+```bash
+pip install git+https://github.com/the-wise-lab/behavioural-modelling.git
+```
+
+Alternatively, clone the repository and run `pip install . -e` from the root directory.
 
 For example:
 
@@ -21,13 +29,11 @@ pip install -e .
 
 This will install an editable version of the package, meaning that you can modify the code and the changes will be reflected in the package.
 
-Alternatively, you can install the package directly from GitHub using `pip`:
+It can then be used as a regular Python package:
 
-```bash
-pip install git+https://github.com/the-wise-lab/behavioural-modelling.git
+```python
+from behavioural_modelling.decision_rules import softmax
 ```
-
-It can then be used as a regular Python package.
 
 ## Examples
 
@@ -39,7 +45,7 @@ The intention of this package to provide functions implementing specific behavio
 
 A scenario case might involve:
 
-1. Defining a model. 
+1. Defining a model.
 2. Simulating data from that model for multiple trials and multiple subjects.
 3. Performing model fitting based on this.
 
