@@ -29,8 +29,12 @@ def asymmetric_rescorla_wagner_update(
     Value estimates are only updated for chosen actions. For unchosen
     actions, the prediction error is set to 0.
 
-    Counterfactualy updating can be used to set the value of unchosen
-    actions to a specific value. By default, this is 0.
+    Counterfactualy updating can be used to set the value of unchosen actions
+    according to a function of the value of chosen actions. This can be useful
+    in cases where the value of unchosen actions should be set to a specific
+    value, such as the negative of the value of chosen actions. By default this
+    is set to `lambda x: -(1 - x)`, which sets the value of unchosen actions to
+    the negative of the value of chosen actions.
 
     Args:
         value (jax.typing.ArrayLike): The current estimated value of a
@@ -50,7 +54,7 @@ def asymmetric_rescorla_wagner_update(
             The function takes as input an array calculated as `outcome *
             chosen`, representing the values for chosen options as the outcome
             value and unchosen options as 0.
-            Defaults to lambda x: -(1 - x), which sets the value of
+            Defaults to `lambda x: -(1 - x)`, which sets the value of
             unchosen actions to the negative of the value of chosen
             actions.
         update_all_options (bool, optional): Whether to update the value
