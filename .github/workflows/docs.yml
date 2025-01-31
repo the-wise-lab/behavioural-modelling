@@ -14,6 +14,9 @@ jobs:
     steps:
       - name: Checkout main
         uses: actions/checkout@v2
+        
+      - name: Copy README.md to docs/index.md
+        run: cp $GITHUB_WORKSPACE/README.md $GITHUB_WORKSPACE/docs/index.md
 
       - name: Deploy docs
         uses: mhausenblas/mkdocs-deploy-gh-pages@master
