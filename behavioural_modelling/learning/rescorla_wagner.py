@@ -1,5 +1,4 @@
 import jax
-import numpy as np
 import jax.numpy as jnp
 from typing import Tuple, Union
 from ..decision_rules import softmax
