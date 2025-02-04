@@ -110,7 +110,7 @@ def asymmetric_rescorla_wagner_update_choice(
     n_actions: int,
     counterfactual_value: callable = lambda x, y: (1 - x) * (1 - y),
     update_all_options: bool = False,
-) -> np.ndarray:
+) -> jnp.ndarray:
     """
     Updates the value estimate using the asymmetric Rescorla-Wagner
     algorithm, and chooses an option based on the softmax function.
@@ -141,15 +141,15 @@ def asymmetric_rescorla_wagner_update_choice(
             estimates for all options, regardless of whether they were
 
     Returns:
-        Tuple[np.ndarray, Tuple[jax.typing.ArrayLike, np.ndarray, int,
-            np.ndarray]]:
-            - updated_value (jnp.ndarray): The updated value estimate.
-            - output_tuple (Tuple[jax.typing.ArrayLike, np.ndarray, int,
-                np.ndarray]):
-                - value (jax.typing.ArrayLike): The original value estimate.
-                - choice_p (jnp.ndarray): The choice probabilities.
+        Tuple[jax.Array, Tuple[jax.Array, jax.Array, int,
+            jax.Array]]:
+            - updated_value (jax.Array): The updated value estimate.
+            - output_tuple (Tuple[jax.Array, jax.Array, int,
+                jax.Array]):
+                - value (jax.Array): The original value estimate.
+                - choice_p (jax.Array): The choice probabilities.
                 - choice (int): The chosen action.
-                - choice_array (jnp.ndarray): The chosen action in one-hot
+                - choice_array (jax.Array): The chosen action in one-hot
                     format.
     """
 
