@@ -110,7 +110,7 @@ def asymmetric_rescorla_wagner_update_choice(
     n_actions: int,
     counterfactual_value: callable = lambda x, y: (1 - x) * (1 - y),
     update_all_options: bool = False,
-) -> jax.typing.Array:
+) -> jax.Array:
     """
     Updates the value estimate using the asymmetric Rescorla-Wagner
     algorithm, and chooses an option based on the softmax function.
@@ -280,7 +280,7 @@ def asymmetric_volatile_dynamic_rescorla_wagner_update_choice(
     alpha_interaction: float,
     temperature: float,
     n_actions: int,
-) -> jax.typing.Array:
+) -> jax.Array:
     """
     Updates the value estimate using a variant of the Rescorla-Wagner
     learning rule that adjusts learning rate based on volatility
@@ -308,15 +308,15 @@ def asymmetric_volatile_dynamic_rescorla_wagner_update_choice(
         n_actions (int): The number of actions to choose from.
 
     Returns:
-        Tuple[jax.typing.Array, Tuple[jax.typing.ArrayLike, jax.typing.Array, int,
-            jax.typing.Array]]:
-            - updated_value (jax.typing.Array): The updated value estimate.
-            - output_tuple (Tuple[jax.typing.Array, jax.typing.Array, int,
-                jax.typing.Array]):
-                - value (jax.typing.Array): The original value estimate.
-                - choice_p (jax.typing.Array): The choice probabilities.
+        Tuple[jax.Array, Tuple[jax.typing.ArrayLike, jax.Array, int,
+            jax.Array]]:
+            - updated_value (jax.Array): The updated value estimate.
+            - output_tuple (Tuple[jax.Array, jax.Array, int,
+                jax.Array]):
+                - value (jax.Array): The original value estimate.
+                - choice_p (jax.Array): The choice probabilities.
                 - choice (int): The chosen action.
-                - choice_array (jax.typing.Array): The chosen action in one-hot
+                - choice_array (jax.Array): The chosen action in one-hot
                     format.
     """
 
@@ -365,7 +365,7 @@ def asymmetric_volatile_rescorla_wagner_single_value_update_choice(
     alpha_pos_neg: float,
     alpha_interaction: float,
     temperature: float,
-) -> jax.typing.Array:
+) -> jax.Array:
     """
     Updates the value estimate using the asymmetric volatile dynamic
     Rescorla-Wagner algorithm, and chooses an option based on the softmax
