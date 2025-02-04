@@ -101,7 +101,12 @@ def softmax_stickiness(
 
     Args:
         value (ArrayLike): Array of values to apply softmax to, shape
-            (n_bandits, )
+            (n_bandits, n_observations). Note that this **does not** account
+            for trial-wise dependencies, so each observation is treated
+            independently. This can be useful to apply the same stickiness
+            to all trials, but additional code will be required to account
+            for trial-wise dependencies (i.e., the choice on observation n-1)
+            influencing the choice on observation n).
         temperature (float, optional): Softmax temperature, in range [0, inf].
             Note that this is temperature rather than inverse temperature;
             values are multipled by this value. Defaults to 1.0.
@@ -154,7 +159,12 @@ def softmax_stickiness_inverse_temperature(
 
     Args:
         value (ArrayLike): Array of values to apply softmax to, shape
-            (n_bandits, )
+            (n_bandits, n_observations). Note that this **does not** account
+            for trial-wise dependencies, so each observation is treated
+            independently. This can be useful to apply the same stickiness
+            to all trials, but additional code will be required to account
+            for trial-wise dependencies (i.e., the choice on observation n-1)
+            influencing the choice on observation n).
         inverse_temperature (float, optional): Softmax inverse temperature,
             range [0, inf]. Higher values make choices more deterministic.
             Defaults to 1.0
