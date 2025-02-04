@@ -110,7 +110,7 @@ def asymmetric_rescorla_wagner_update_choice(
     n_actions: int,
     counterfactual_value: callable = lambda x, y: (1 - x) * (1 - y),
     update_all_options: bool = False,
-) -> jnp.ndarray:
+) -> jnp.typing.Array:
     """
     Updates the value estimate using the asymmetric Rescorla-Wagner
     algorithm, and chooses an option based on the softmax function.
@@ -280,7 +280,7 @@ def asymmetric_volatile_dynamic_rescorla_wagner_update_choice(
     alpha_interaction: float,
     temperature: float,
     n_actions: int,
-) -> jnp.ndarray:
+) -> jnp.typing.Array:
     """
     Updates the value estimate using a variant of the Rescorla-Wagner
     learning rule that adjusts learning rate based on volatility
@@ -308,15 +308,15 @@ def asymmetric_volatile_dynamic_rescorla_wagner_update_choice(
         n_actions (int): The number of actions to choose from.
 
     Returns:
-        Tuple[np.ndarray, Tuple[jax.typing.ArrayLike, np.ndarray, int,
-            np.ndarray]]:
-            - updated_value (jnp.ndarray): The updated value estimate.
-            - output_tuple (Tuple[jax.typing.ArrayLike, np.ndarray, int,
-                np.ndarray]):
-                - value (jax.typing.ArrayLike): The original value estimate.
-                - choice_p (jnp.ndarray): The choice probabilities.
+        Tuple[jnp.typing.Array, Tuple[jax.typing.ArrayLike, jnp.typing.Array, int,
+            jnp.typing.Array]]:
+            - updated_value (jnp.typing.Array): The updated value estimate.
+            - output_tuple (Tuple[jnp.typing.Array, jnp.typing.Array, int,
+                jnp.typing.Array]):
+                - value (jnp.typing.Array): The original value estimate.
+                - choice_p (jnp.typing.Array): The choice probabilities.
                 - choice (int): The chosen action.
-                - choice_array (jnp.ndarray): The chosen action in one-hot
+                - choice_array (jnp.typing.Array): The chosen action in one-hot
                     format.
     """
 
@@ -365,7 +365,7 @@ def asymmetric_volatile_rescorla_wagner_single_value_update_choice(
     alpha_pos_neg: float,
     alpha_interaction: float,
     temperature: float,
-) -> jnp.ndarray:
+) -> jnp.typing.Array:
     """
     Updates the value estimate using the asymmetric volatile dynamic
     Rescorla-Wagner algorithm, and chooses an option based on the softmax
