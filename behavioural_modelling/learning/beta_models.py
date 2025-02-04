@@ -91,13 +91,23 @@ def sum_betas(beta1_params: ArrayLike, beta2_params: ArrayLike) -> jnp.ndarray:
 
     Where the first two moments of the summed distribution are calculated as follows:
 
-    $$\mu = \mu_1 + \mu_2$$
-    $$\sigma^2 = \sigma_1^2 + \sigma_2^2$$
+    $$
+    \\mu = \\mu_1 + \\mu_2
+    $$
+
+    $$
+    \\sigma^2 = \\sigma_1^2 + \\sigma_2^2
+    $$
 
     We then calculate the parameters of the new beta distribution using the following equations:
 
-    $$\alpha = \mu \left( \frac{\mu (1 - \mu)}{\sigma^2} - 1 \right)$$
-    $$\beta = (1 - \mu) \left( \frac{\mu (1 - \mu)}{\sigma^2} - 1 \right)$$
+    $$
+    \\alpha = \\mu \\left( \\frac{\\mu (1 - \\mu)}{\\sigma^2} - 1 \\right)
+    $$
+
+    $$
+    \\beta = (1 - \\mu) \\left( \\frac{\\mu (1 - \\mu)}{\\sigma^2} - 1 \\right)
+    $$
 
     This function assumes that the means of the two beta distributions sum to <=1. If this is not the case,
     the output will be invalid.
@@ -187,10 +197,13 @@ def leaky_beta_update(
 
     Values are updated according to the following equations:
 
-    \begin{gathered}
-    A_i^{t+1}=\lambda \cdot A_i^{t}+outcome_t \cdot \tau^{+}  \\
-    B_i^{t+1}=\lambda \cdot B_i^{t}+(1-outcome_t) \cdot \tau^{-}
-    \end{gathered}
+    $$
+    A_i^{t+1} = \\lambda \\cdot A_i^{t} + outcome_t \\cdot \\tau^{+}
+    $$
+
+    $$
+    B_i^{t+1} = \\lambda \\cdot B_i^{t} + (1-outcome_t) \\cdot \\tau^{-}
+    $$
 
     This function also allows for updating to be turned off (i.e., the estimate is not updated at all) and for incrementing
     to be turned off (i.e., decay is applied, but the outcome is not registered).

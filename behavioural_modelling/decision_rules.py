@@ -11,9 +11,9 @@ def softmax(value: ArrayLike, temperature: float = 1) -> ArrayLike:
 
     In equation form, this is:
 
-    ```math
-    P(a) = \frac{e^{Q(a) / \tau}}{\sum_{b} e^{Q(b) / \tau}}
-    ```
+    $$
+    P(a) = \\frac{e^{Q(a) / \\tau}}{\\sum_{b} e^{Q(b) / \\tau}}
+    $$
 
     Where `P(a)` is the probability of choosing action `a`,
     `Q(a)` is the value of action `a`, and `\tau` is the
@@ -46,9 +46,9 @@ def softmax_inverse_temperature(
 
     In equation form, this is:
 
-    ```math
-    P(a) = e^(beta * Q(a)) / Σ e^(beta * Q(b))
-    ```
+    $$
+    P(a) = \\frac{e^{\\beta \\cdot Q(a)}}{\\sum_{b} e^{\\beta \\cdot Q(b)}}
+    $$
 
     Where `P(a)` is the probability of choosing action `a`,
     `Q(a)` is the value of action `a`, and `beta` is the
@@ -80,15 +80,17 @@ def softmax_stickiness(
     parameter.
 
     The standard softmax function is:
-    ```math
-    P(a) = \frac{e^{Q(a) / \tau}}{\sum_{b} e^{Q(b) / \tau}}
-    ```
+
+    $$
+    P(a) = \\frac{e^{Q(a) / \\tau}}{\\sum_{b} e^{Q(b) / \\tau}}
+    $$
 
     With stickiness added:
-    ```math
-    P(a) = \frac{e^{(Q(a) + \kappa \cdot same(a, a_{t-1})) / \tau}}
-    {\sum_{b} e^{(Q(b) + \kappa \cdot same(b, a_{t-1})) / \tau}}
-    ```
+
+    $$
+    P(a) = \\frac{e^{(Q(a) + \\kappa \\cdot same(a, a_{t-1}))/\\tau}}
+    {\\sum_{b} e^{(Q(b) + \\kappa \\cdot same(b, a_{t-1}))/\\tau}}
+    $$
 
     Where:
     - P(a) is the probability of choosing action a
@@ -131,14 +133,17 @@ def softmax_stickiness_inverse_temperature(
     parameter.
 
     The standard softmax function is:
-    ```math
-    P(a) = e^(beta * Q(a)) / Σ e^(beta * Q(b))
-    ```
+
+    $$
+    P(a) = \\frac{e^{\\beta \\cdot Q(a)}}{\\sum_{b} e^{\\beta \\cdot Q(b)}}
+    $$
 
     With stickiness added:
-    ```math
-    P(a) ∝ exp(\beta * Q(a) + \kappa * same(a, a_{t-1}))
-    ```
+    
+    $$
+    P(a) = \\frac{e^{(Q(a) + \\kappa \\cdot same(a, a_{t-1}))/\\tau}}
+    {\\sum_{b} e^{(Q(b) + \\kappa \\cdot same(b, a_{t-1}))/\\tau}}
+    $$
 
     Where:
     - P(a) is the probability of choosing action a
@@ -181,10 +186,10 @@ def softmax_subtract_max(
 
     In equation form, this is:
 
-    ```math
-    P(a) = \frac{e^{(Q(a) - \max_{b} Q(b)) / \tau}}
-    {\sum_{b} e^{(Q(b) - \max_{c} Q(c)) / \tau}}
-    ```
+    $$
+    P(a) = \\frac{e^{(Q(a) - \max_{b} Q(b)) / \\tau}}
+    {\\sum_{b} e^{(Q(b) - \max_{c} Q(c)) / \\tau}}
+    $$
 
     Where `P(a)` is the probability of choosing action `a`,
     `Q(a)` is the value of action `a`, and `\tau` is the
