@@ -129,6 +129,16 @@ def test_softmax_stickiness():
     # Generate a previous choice (one-hot encoded)
     prev_choice = jnp.array([1, 0])
 
+    # Store choice probs
+    choice_probs = np.zeros(
+        (
+            len(temperatures),
+            len(stickiness_values),
+            test_values.shape[0],
+            test_values.shape[1],
+        )
+    )
+
     # Calculate softmax probabilities for each temperature and stickiness
     for t in temperatures:
 
@@ -156,11 +166,17 @@ def test_softmax_stickiness():
 
             probs[stickiness_values.index(s)] = softmax_probs
 
+        choice_probs[temperatures.index(t)] = probs
+
         # Check that option 1 is increasingly likely with increasing stickiness
         assert jnp.all(
             jnp.diff(jnp.diff(probs[:, :, :], axis=-1).squeeze().sum(axis=-1))
             < 0
         )
+
+    # Check temperature effect - difference between probabilities
+    # should be lower (less deterministic) with higher temperature
+    assert np.abs(np.diff(choice_probs[0, 0, 4, :])) > np.abs(np.diff(choice_probs[-1, 0, 4, :]))
 
 
 def test_softmax_stickiness_inverse_temperature():

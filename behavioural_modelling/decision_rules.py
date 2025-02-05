@@ -27,7 +27,8 @@ def softmax(value: ArrayLike, temperature: float = 1) -> ArrayLike:
             (n_trials, n_bandits)
         temperature (float, optional): Softmax temperature, in range [0, inf].
             Note that this is temperature rather than inverse temperature;
-            values are multipled by this value. Defaults to 1.
+            values are divided by this value. Higher values make choices less
+            deterministic. Defaults to 1.
 
     Returns:
         ArrayLike: Choice probabilities, of shape (n_trials, n_bandits)
@@ -62,7 +63,8 @@ def softmax_inverse_temperature(
             (n_trials, n_bandits)
         inverse_temperature (float, optional): Softmax inverse temperature, in
             range [0, inf]. Note that this is inverse temperature rather than
-            temperature; values are multiplied by this value. Defaults to 1.
+            temperature; values are multiplied by this value. Higher values
+            make choices more deterministic. Defaults to 1.
     """
     return (jnp.exp(inverse_temperature * value)) / (
         jnp.sum(jnp.exp(inverse_temperature * value), axis=1)[:, None]
@@ -109,7 +111,8 @@ def softmax_stickiness(
             influencing the choice on observation n).
         temperature (float, optional): Softmax temperature, in range [0, inf].
             Note that this is temperature rather than inverse temperature;
-            values are multipled by this value. Defaults to 1.0.
+            values are divided by this value. Higher values
+            make choices less deterministic. Defaults to 1.0.
         stickiness (float, optional): Weight given to previous choices, range
             (-inf, inf). Positive values increase probability of repeating
             choices. Defaults to 0.0
@@ -122,8 +125,8 @@ def softmax_stickiness(
 
     sticky_value = value + stickiness * prev_choice
 
-    return (jnp.exp(temperature * sticky_value)) / (
-        jnp.sum(jnp.exp(temperature * sticky_value), axis=1)[:, None]
+    return (jnp.exp(sticky_value / temperature)) / (
+        jnp.sum(jnp.exp(sticky_value / temperature), axis=1)[:, None]
     )
 
 @jax.jit
@@ -210,7 +213,7 @@ def softmax_subtract_max(
             (n_trials, n_bandits)
         temperature (float, optional): Softmax temperature, in range [0, inf].
             Note that this is temperature rather than inverse temperature;
-            values are multipled by this value. Defaults to 1.
+            values are divided by this value. Defaults to 1.
 
     Returns:
         ArrayLike: Choice probabilities, of shape (n_trials, n_bandits)
