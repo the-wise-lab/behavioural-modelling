@@ -1,7 +1,7 @@
 import jax
 import jax.numpy as jnp
 from typing import Tuple, Union
-from ..decision_rules import softmax
+from ..decision_rules import softmax, softmax_stickiness
 from ..utils import choice_from_action_p
 
 
@@ -180,6 +180,108 @@ def asymmetric_rescorla_wagner_update_choice(
 
 asymmetric_rescorla_wagner_update_choice = jax.jit(
     asymmetric_rescorla_wagner_update_choice, static_argnums=(5, 6)
+)
+
+
+def asymmetric_rescorla_wagner_update_choice_sticky(
+    value_choice: Tuple[jax.typing.ArrayLike, jax.typing.ArrayLike],
+    outcome_key: Tuple[jax.typing.ArrayLike, jax.random.PRNGKey],
+    alpha_p: float,
+    alpha_n: float,
+    temperature: float,
+    stickiness: float,
+    n_actions: int,
+    counterfactual_value: callable = lambda x, y: (1 - x) * (1 - y),
+    update_all_options: bool = False,
+) -> jax.Array:
+    """
+    Updates the value estimate using the asymmetric Rescorla-Wagner
+    algorithm, and chooses an option based on the softmax function.
+
+    Incorporates additional choice stickiness parameter, such that
+    the probability of choosing the same option as the previous trial
+    is increased (or decreased if the value is negative).
+
+    See `asymmetric_rescorla_wagner_update` for details on the learning
+    rule.
+
+    Args:
+        value_choice (Tuple[jax.typing.ArrayLike, jax.typing.ArrayLike]):
+            A tuple containing the current value estimate and the previous
+            choice. The previous choice should be a one-hot encoded array
+            of shape (n_actions,) where 1 indicates the chosen action and
+            0 indicates the unchosen actions.
+        outcome_key (Tuple[jax.typing.ArrayLike, jax.random.PRNGKey]):
+            A tuple containing the outcome and the PRNG key.
+        alpha_p (float): The learning rate for positive outcomes.
+        alpha_n (float): The learning rate for negative outcomes.
+        temperature (float): The temperature parameter for softmax function.
+        stickiness (float): The stickiness parameter for softmax function.
+        n_actions (int): The number of actions to choose from.
+        counterfactual_value (callable], optional): The value
+            to use for unchosen actions. This should be provided as a
+            callable function that returns a value. This will have
+            no effect if `update_all_options` is set to False.
+            The function takes as input the values of `outcome` and `chosen`
+            (i.e., the two elements of the `outcome_chosen` argument).
+            Defaults to `lambda x, y: (1 - x) * (1 - y)`, which assumes
+            outcomes are binary (0 or 1), and sets the value of unchosen
+            actions to complement the value of chosen actions (i.e.,
+            a chosen value of 1 will set the unchosen value to 0 and
+            vice versa).
+        update_all_options (bool, optional): Whether to update the value
+            estimates for all options, regardless of whether they were
+
+    Returns:
+        Tuple[jax.Array, Tuple[jax.Array, jax.Array, int,
+            jax.Array]]:
+            - updated_value (jax.Array): The updated value estimate.
+            - output_tuple (Tuple[jax.Array, jax.Array, int,
+                jax.Array]):
+                - value (jax.Array): The original value estimate.
+                - choice_p (jax.Array): The choice probabilities.
+                - choice (int): The chosen action.
+                - choice_array (jax.Array): The chosen action in one-hot
+                    format.
+    """
+    # Unpack value and previous choice
+    value, previous_choice = value_choice
+
+    # Unpack outcome and key
+    outcome, key = outcome_key
+
+    # Get choice probabilities
+    choice_p = softmax_stickiness(
+        value[None, :], temperature, stickiness, previous_choice
+    ).squeeze()
+
+    # Get choice
+    choice = choice_from_action_p(key, choice_p)
+
+    # Convert it to one-hot format
+    choice_array = jnp.zeros(n_actions, dtype=jnp.int16)
+    choice_array = choice_array.at[choice].set(1)
+
+    # Get the outcome and update the value estimate
+    updated_value, (_, prediction_error) = asymmetric_rescorla_wagner_update(
+        value,
+        (outcome, choice_array),
+        alpha_p,
+        alpha_n,
+        counterfactual_value=counterfactual_value,
+        update_all_options=update_all_options,
+    )
+
+    return (updated_value, choice_array), (
+        value,
+        choice_p,
+        choice_array,
+        prediction_error,
+    )
+
+
+asymmetric_rescorla_wagner_update_choice_sticky = jax.jit(
+    asymmetric_rescorla_wagner_update_choice_sticky, static_argnums=(6, 7)
 )
 
 

@@ -16,8 +16,12 @@ from behavioural_modelling.learning.rescorla_wagner import (
 from behavioural_modelling.learning.rescorla_wagner import (
     asymmetric_volatile_rescorla_wagner_single_value_update_choice,
 )
+from behavioural_modelling.learning.rescorla_wagner import (
+    asymmetric_rescorla_wagner_update_choice_sticky,
+)
 
 import jax.numpy as jnp
+
 
 def test_asymmetric_rescorla_wagner_update_positive_error():
     value = jnp.array(0.5)
@@ -25,12 +29,15 @@ def test_asymmetric_rescorla_wagner_update_positive_error():
     alpha_p = jnp.array(0.1)
     alpha_n = jnp.array(0.2)
 
-    updated_value, (old_value, prediction_error) = asymmetric_rescorla_wagner_update(
-        value, outcome_chosen, alpha_p, alpha_n
+    updated_value, (old_value, prediction_error) = (
+        asymmetric_rescorla_wagner_update(
+            value, outcome_chosen, alpha_p, alpha_n
+        )
     )
 
     assert np.isclose(prediction_error, 0.5)
     assert np.isclose(updated_value, 0.55)
+
 
 def test_asymmetric_rescorla_wagner_update_negative_error():
     value = jnp.array(0.5)
@@ -38,12 +45,15 @@ def test_asymmetric_rescorla_wagner_update_negative_error():
     alpha_p = jnp.array(0.1)
     alpha_n = jnp.array(0.2)
 
-    updated_value, (old_value, prediction_error) = asymmetric_rescorla_wagner_update(
-        value, outcome_chosen, alpha_p, alpha_n
+    updated_value, (old_value, prediction_error) = (
+        asymmetric_rescorla_wagner_update(
+            value, outcome_chosen, alpha_p, alpha_n
+        )
     )
 
     assert np.isclose(prediction_error, -0.5)
     assert np.isclose(updated_value, 0.4)
+
 
 def test_asymmetric_rescorla_wagner_update_unchosen_action():
     value = jnp.array(0.5)
@@ -51,12 +61,15 @@ def test_asymmetric_rescorla_wagner_update_unchosen_action():
     alpha_p = jnp.array(0.1)
     alpha_n = jnp.array(0.2)
 
-    updated_value, (old_value, prediction_error) = asymmetric_rescorla_wagner_update(
-        value, outcome_chosen, alpha_p, alpha_n
+    updated_value, (old_value, prediction_error) = (
+        asymmetric_rescorla_wagner_update(
+            value, outcome_chosen, alpha_p, alpha_n
+        )
     )
 
     assert np.isclose(prediction_error, 0.0)
     assert np.isclose(updated_value, 0.5)
+
 
 def test_asymmetric_rescorla_wagner_update_zero_error():
     value = jnp.array(0.5)
@@ -64,8 +77,10 @@ def test_asymmetric_rescorla_wagner_update_zero_error():
     alpha_p = jnp.array(0.1)
     alpha_n = jnp.array(0.2)
 
-    updated_value, (old_value, prediction_error) = asymmetric_rescorla_wagner_update(
-        value, outcome_chosen, alpha_p, alpha_n
+    updated_value, (old_value, prediction_error) = (
+        asymmetric_rescorla_wagner_update(
+            value, outcome_chosen, alpha_p, alpha_n
+        )
     )
 
     assert np.isclose(prediction_error, 0.0)
@@ -78,12 +93,14 @@ def test_asymmetric_rescorla_wagner_update_multiple_values():
     alpha_p = jnp.array(0.1)
     alpha_n = jnp.array(0.2)
 
-    updated_value, (old_value, prediction_error) = asymmetric_rescorla_wagner_update(
-        value, outcome_chosen, alpha_p, alpha_n
+    updated_value, (old_value, prediction_error) = (
+        asymmetric_rescorla_wagner_update(
+            value, outcome_chosen, alpha_p, alpha_n
+        )
     )
 
-    assert np.allclose(prediction_error, np.array([-0.2,  0.5, -0.3]))
-    assert np.allclose(updated_value,  np.array([ 0.16, 0.55, 0.74]))
+    assert np.allclose(prediction_error, np.array([-0.2, 0.5, -0.3]))
+    assert np.allclose(updated_value, np.array([0.16, 0.55, 0.74]))
 
 
 def test_asymmetric_rescorla_wagner_update_partial_choices():
@@ -92,12 +109,14 @@ def test_asymmetric_rescorla_wagner_update_partial_choices():
     alpha_p = jnp.array(0.1)
     alpha_n = jnp.array(0.2)
 
-    updated_value, (old_value, prediction_error) = asymmetric_rescorla_wagner_update(
-        value, outcome_chosen, alpha_p, alpha_n
+    updated_value, (old_value, prediction_error) = (
+        asymmetric_rescorla_wagner_update(
+            value, outcome_chosen, alpha_p, alpha_n
+        )
     )
 
-    assert np.allclose(prediction_error, np.array([ 0.7,  0.0, -0.2]))
-    assert np.allclose(updated_value,  np.array([ 0.37, 0.7, 0.16]))
+    assert np.allclose(prediction_error, np.array([0.7, 0.0, -0.2]))
+    assert np.allclose(updated_value, np.array([0.37, 0.7, 0.16]))
 
 
 def test_asymmetric_rescorla_wagner_update_varying_alphas():
@@ -108,8 +127,10 @@ def test_asymmetric_rescorla_wagner_update_varying_alphas():
     alpha_p = jnp.array(0.5)
     alpha_n = jnp.array(0.1)
 
-    updated_value, (old_value, prediction_error) = asymmetric_rescorla_wagner_update(
-        value, outcome_chosen, alpha_p, alpha_n
+    updated_value, (old_value, prediction_error) = (
+        asymmetric_rescorla_wagner_update(
+            value, outcome_chosen, alpha_p, alpha_n
+        )
     )
     # prediction error = 0.5
     # update = 0.5 + 0.5 * 0.5 = 0.75
@@ -122,8 +143,10 @@ def test_asymmetric_rescorla_wagner_update_varying_alphas():
     alpha_p = jnp.array(0.1)
     alpha_n = jnp.array(0.5)
 
-    updated_value, (old_value, prediction_error) = asymmetric_rescorla_wagner_update(
-        value, outcome_chosen, alpha_p, alpha_n
+    updated_value, (old_value, prediction_error) = (
+        asymmetric_rescorla_wagner_update(
+            value, outcome_chosen, alpha_p, alpha_n
+        )
     )
     # prediction error = -0.5
     # update = 0.5 + 0.5 * (-0.5) = 0.25
@@ -148,6 +171,7 @@ def test_asymmetric_rescorla_wagner_update_alpha_sensitivity():
     # Check monotonic increase with alpha_p
     assert updated_results[0] < updated_results[1] < updated_results[2]
 
+
 def test_asymmetric_rescorla_wagner_update_choice_positive_error():
     value = jnp.array([0.5, 0.2])
     outcome = jnp.array([1.0, 0.0])
@@ -157,14 +181,17 @@ def test_asymmetric_rescorla_wagner_update_choice_positive_error():
     temperature = 1.0
     n_actions = 2
 
-    updated_value, (old_value, choice_p, choice_array, prediction_error) = asymmetric_rescorla_wagner_update_choice(
-        value, (outcome, key), alpha_p, alpha_n, temperature, n_actions
+    updated_value, (old_value, choice_p, choice_array, prediction_error) = (
+        asymmetric_rescorla_wagner_update_choice(
+            value, (outcome, key), alpha_p, alpha_n, temperature, n_actions
+        )
     )
 
     assert updated_value.shape == value.shape
     assert choice_p.shape == (n_actions,)
     assert choice_array.shape == (n_actions,)
     assert prediction_error.shape == value.shape
+
 
 def test_asymmetric_rescorla_wagner_update_choice_negative_error():
     value = jnp.array([0.5, 0.8])
@@ -175,14 +202,17 @@ def test_asymmetric_rescorla_wagner_update_choice_negative_error():
     temperature = 1.0
     n_actions = 2
 
-    updated_value, (old_value, choice_p, choice_array, prediction_error) = asymmetric_rescorla_wagner_update_choice(
-        value, (outcome, key), alpha_p, alpha_n, temperature, n_actions
+    updated_value, (old_value, choice_p, choice_array, prediction_error) = (
+        asymmetric_rescorla_wagner_update_choice(
+            value, (outcome, key), alpha_p, alpha_n, temperature, n_actions
+        )
     )
     print(prediction_error)
     assert updated_value.shape == value.shape
     assert choice_p.shape == (n_actions,)
     assert choice_array.shape == (n_actions,)
     assert prediction_error.shape == value.shape
+
 
 def test_asymmetric_rescorla_wagner_update_choice_zero_error():
     value = jnp.array([0.5, 0.5])
@@ -193,14 +223,17 @@ def test_asymmetric_rescorla_wagner_update_choice_zero_error():
     temperature = 1.0
     n_actions = 2
 
-    updated_value, (old_value, choice_p, choice_array, prediction_error) = asymmetric_rescorla_wagner_update_choice(
-        value, (outcome, key), alpha_p, alpha_n, temperature, n_actions
+    updated_value, (old_value, choice_p, choice_array, prediction_error) = (
+        asymmetric_rescorla_wagner_update_choice(
+            value, (outcome, key), alpha_p, alpha_n, temperature, n_actions
+        )
     )
 
     assert updated_value.shape == value.shape
     assert choice_p.shape == (n_actions,)
     assert choice_array.shape == (n_actions,)
     assert prediction_error.shape == value.shape
+
 
 def test_asymmetric_rescorla_wagner_update_choice_multiple_values():
     value = jnp.array([0.2, 0.5, 0.8])
@@ -211,14 +244,17 @@ def test_asymmetric_rescorla_wagner_update_choice_multiple_values():
     temperature = 1.0
     n_actions = 3
 
-    updated_value, (old_value, choice_p, choice_array, prediction_error) = asymmetric_rescorla_wagner_update_choice(
-        value, (outcome, key), alpha_p, alpha_n, temperature, n_actions
+    updated_value, (old_value, choice_p, choice_array, prediction_error) = (
+        asymmetric_rescorla_wagner_update_choice(
+            value, (outcome, key), alpha_p, alpha_n, temperature, n_actions
+        )
     )
 
     assert updated_value.shape == value.shape
     assert choice_p.shape == (n_actions,)
     assert choice_array.shape == (n_actions,)
     assert prediction_error.shape == value.shape
+
 
 def test_asymmetric_rescorla_wagner_update_choice_varying_alphas():
     # Case 1: alpha_p is large, alpha_n is small
@@ -230,8 +266,10 @@ def test_asymmetric_rescorla_wagner_update_choice_varying_alphas():
     alpha_n = jnp.array(0.1)
     temperature = 1.0
 
-    updated_value, (old_value, choice_p, choice_array, prediction_error) = asymmetric_rescorla_wagner_update_choice(
-        value, outcome_key, alpha_p, alpha_n, temperature, 2
+    updated_value, (old_value, choice_p, choice_array, prediction_error) = (
+        asymmetric_rescorla_wagner_update_choice(
+            value, outcome_key, alpha_p, alpha_n, temperature, 2
+        )
     )
     # prediction error = 0.5
     # update = 0.5 + 0.5 * 0.5 = 0.75
@@ -246,12 +284,15 @@ def test_asymmetric_rescorla_wagner_update_choice_varying_alphas():
     alpha_n = jnp.array(0.5)
     temperature = 1.0
 
-    updated_value, (old_value, choice_p, choice_array, prediction_error) = asymmetric_rescorla_wagner_update_choice(
-        value, outcome_key, alpha_p, alpha_n, temperature, 2
+    updated_value, (old_value, choice_p, choice_array, prediction_error) = (
+        asymmetric_rescorla_wagner_update_choice(
+            value, outcome_key, alpha_p, alpha_n, temperature, 2
+        )
     )
     # prediction error = -0.5
     # update = 0.5 + 0.5 * (-0.5) = 0.25
     assert np.isclose(updated_value[choice_array.astype(bool)], 0.25)
+
 
 def test_asymmetric_rescorla_wagner_update_choice_temperature_sensitivity():
     value = jnp.array([0.9, 0.1])
@@ -401,6 +442,7 @@ def test_asymmetric_volatile_rescorla_wagner_update_interaction():
         updated_value_low_interaction[0] - value[0]
     )
 
+
 def test_asymmetric_volatile_rw_base_learning_rate_sensitivity():
     # Test sensitivity to alpha_base across a range of values
     value = jnp.array([0.5])
@@ -419,13 +461,18 @@ def test_asymmetric_volatile_rw_base_learning_rate_sensitivity():
 
     for alpha_base in base_rates:
         updated_value, _ = asymmetric_volatile_rescorla_wagner_update(
-            value, (outcome, chosen, volatility),
-            alpha_base, alpha_volatility, alpha_pos_neg, alpha_interaction
+            value,
+            (outcome, chosen, volatility),
+            alpha_base,
+            alpha_volatility,
+            alpha_pos_neg,
+            alpha_interaction,
         )
         updates.append(float(updated_value[0]))
 
     # Check monotonic increase in learning with alpha_base
     assert updates[0] < updates[1] < updates[2]
+
 
 def test_asymmetric_volatile_rw_volatility_sensitivity():
     # Test sensitivity to alpha_volatility in volatile vs stable conditions
@@ -448,15 +495,23 @@ def test_asymmetric_volatile_rw_volatility_sensitivity():
     for alpha_vol in volatility_rates:
         # Stable condition
         updated_value_stable, _ = asymmetric_volatile_rescorla_wagner_update(
-            value, (outcome, chosen, jnp.array(0.0)),
-            alpha_base, alpha_vol, alpha_pos_neg, alpha_interaction
+            value,
+            (outcome, chosen, jnp.array(0.0)),
+            alpha_base,
+            alpha_vol,
+            alpha_pos_neg,
+            alpha_interaction,
         )
         stable_updates.append(float(updated_value_stable[0]))
 
         # Volatile condition
         updated_value_volatile, _ = asymmetric_volatile_rescorla_wagner_update(
-            value, (outcome, chosen, jnp.array(1.0)),
-            alpha_base, alpha_vol, alpha_pos_neg, alpha_interaction
+            value,
+            (outcome, chosen, jnp.array(1.0)),
+            alpha_base,
+            alpha_vol,
+            alpha_pos_neg,
+            alpha_interaction,
         )
         volatile_updates.append(float(updated_value_volatile[0]))
 
@@ -465,6 +520,7 @@ def test_asymmetric_volatile_rw_volatility_sensitivity():
 
     # Volatile condition should show increasing updates with alpha_volatility
     assert volatile_updates[0] < volatile_updates[1] < volatile_updates[2]
+
 
 def test_asymmetric_volatile_rw_pos_neg_sensitivity():
     # Test sensitivity to alpha_pos_neg for positive vs negative PEs
@@ -486,15 +542,23 @@ def test_asymmetric_volatile_rw_pos_neg_sensitivity():
     for alpha_pn in pos_neg_rates:
         # Positive PE
         updated_value_pos, _ = asymmetric_volatile_rescorla_wagner_update(
-            value, (jnp.array(1.0), chosen, volatility),
-            alpha_base, alpha_volatility, alpha_pn, alpha_interaction
+            value,
+            (jnp.array(1.0), chosen, volatility),
+            alpha_base,
+            alpha_volatility,
+            alpha_pn,
+            alpha_interaction,
         )
         positive_updates.append(float(updated_value_pos[0]))
 
         # Negative PE
         updated_value_neg, _ = asymmetric_volatile_rescorla_wagner_update(
-            value, (jnp.array(0.0), chosen, volatility),
-            alpha_base, alpha_volatility, alpha_pn, alpha_interaction
+            value,
+            (jnp.array(0.0), chosen, volatility),
+            alpha_base,
+            alpha_volatility,
+            alpha_pn,
+            alpha_interaction,
         )
         negative_updates.append(float(updated_value_neg[0]))
 
@@ -503,6 +567,7 @@ def test_asymmetric_volatile_rw_pos_neg_sensitivity():
 
     # Higher alpha_pos_neg should decrease negative updates (more negative)
     assert negative_updates[0] < negative_updates[1] < negative_updates[2]
+
 
 def test_asymmetric_volatile_rw_interaction_sensitivity():
     # Test sensitivity to interaction term
@@ -523,22 +588,38 @@ def test_asymmetric_volatile_rw_interaction_sensitivity():
     for alpha_int in interaction_rates:
         # Volatile condition, positive PE
         updated_value_pos, _ = asymmetric_volatile_rescorla_wagner_update(
-            value, (jnp.array(1.0), chosen, jnp.array(1.0)),
-            alpha_base, alpha_volatility, alpha_pos_neg, alpha_int
+            value,
+            (jnp.array(1.0), chosen, jnp.array(1.0)),
+            alpha_base,
+            alpha_volatility,
+            alpha_pos_neg,
+            alpha_int,
         )
         updates_volatile_pos.append(float(updated_value_pos[0]))
 
         # Volatile condition, negative PE
         updated_value_neg, _ = asymmetric_volatile_rescorla_wagner_update(
-            value, (jnp.array(0.0), chosen, jnp.array(1.0)),
-            alpha_base, alpha_volatility, alpha_pos_neg, alpha_int
+            value,
+            (jnp.array(0.0), chosen, jnp.array(1.0)),
+            alpha_base,
+            alpha_volatility,
+            alpha_pos_neg,
+            alpha_int,
         )
         updates_volatile_neg.append(float(updated_value_neg[0]))
 
     # Higher interaction term should increase updates for volatile positive PEs
-    assert updates_volatile_pos[0] < updates_volatile_pos[1] < updates_volatile_pos[2]
+    assert (
+        updates_volatile_pos[0]
+        < updates_volatile_pos[1]
+        < updates_volatile_pos[2]
+    )
     # Higher interaction term should decrease updates for volatile negative PEs (more negative)
-    assert updates_volatile_neg[0] < updates_volatile_neg[1] < updates_volatile_neg[2]
+    assert (
+        updates_volatile_neg[0]
+        < updates_volatile_neg[1]
+        < updates_volatile_neg[2]
+    )
 
 
 def test_asymmetric_volatile_dynamic_rw_choice_basic():
@@ -796,20 +877,24 @@ def test_choice_array_format():
     assert jnp.sum(choice_array) == 1
     assert jnp.all(jnp.logical_or(choice_array == 0, choice_array == 1))
 
+
 def test_asymmetric_rescorla_wagner_counterfactual_default():
     value = jnp.array([0.5, 0.5])
     outcome_chosen = (jnp.array(1.0), jnp.array([1.0, 0.0]))
     alpha_p = jnp.array(0.1)
     alpha_n = jnp.array(0.2)
 
-    updated_value, (old_value, prediction_error) = asymmetric_rescorla_wagner_update(
-        value, outcome_chosen, alpha_p, alpha_n
+    updated_value, (old_value, prediction_error) = (
+        asymmetric_rescorla_wagner_update(
+            value, outcome_chosen, alpha_p, alpha_n
+        )
     )
-    
+
     # Chosen action should update toward outcome
     assert np.isclose(updated_value[0], 0.55)  # 0.5 + 0.1 * (1.0 - 0.5)
     # Unchosen action should not be updated by default
-    assert np.isclose(updated_value[1], 0.5)   # 0.5 + 0.2 * (0.0 - 0.5)
+    assert np.isclose(updated_value[1], 0.5)  # 0.5 + 0.2 * (0.0 - 0.5)
+
 
 def test_asymmetric_rescorla_wagner_custom_counterfactual_without_updating_all_options():
     value = jnp.array([0.5, 0.5])
@@ -818,14 +903,21 @@ def test_asymmetric_rescorla_wagner_custom_counterfactual_without_updating_all_o
     alpha_n = jnp.array(0.2)
     counterfactual_value = lambda x, y: -x  # Opposite of chosen value
 
-    updated_value, (old_value, prediction_error) = asymmetric_rescorla_wagner_update(
-        value, outcome_chosen, alpha_p, alpha_n, counterfactual_value=counterfactual_value
+    updated_value, (old_value, prediction_error) = (
+        asymmetric_rescorla_wagner_update(
+            value,
+            outcome_chosen,
+            alpha_p,
+            alpha_n,
+            counterfactual_value=counterfactual_value,
+        )
     )
 
     # Chosen action updates normally
     assert np.isclose(updated_value[0], 0.55)
     # Unchosen action shouldn't update because update_all_options=False
     assert np.isclose(updated_value[1], 0.5)  # 0.5 + 0.2 * (0.3 - 0.5)
+
 
 def test_asymmetric_rescorla_wagner_update_all_options():
     value = jnp.array([0.5, 0.5])
@@ -834,15 +926,21 @@ def test_asymmetric_rescorla_wagner_update_all_options():
     alpha_n = jnp.array(0.2)
     counterfactual_value = lambda x, y: (1 - x) * (1 - y)  # SHould be 0
 
-    updated_value, (old_value, prediction_error) = asymmetric_rescorla_wagner_update(
-        value, outcome_chosen, alpha_p, alpha_n, 
-        counterfactual_value=counterfactual_value,
-        update_all_options=True
+    updated_value, (old_value, prediction_error) = (
+        asymmetric_rescorla_wagner_update(
+            value,
+            outcome_chosen,
+            alpha_p,
+            alpha_n,
+            counterfactual_value=counterfactual_value,
+            update_all_options=True,
+        )
     )
 
     # Both actions should update, even the unchosen one
     assert np.isclose(updated_value[0], 0.55)  # Toward actual outcome
     assert np.isclose(updated_value[1], 0.4)  # Toward counterfactual value
+
 
 def test_asymmetric_rescorla_wagner_update_all_options_opposite_signed_outcome():
     value = jnp.array([0.0, 0.0])
@@ -851,15 +949,21 @@ def test_asymmetric_rescorla_wagner_update_all_options_opposite_signed_outcome()
     alpha_n = jnp.array(0.2)
     counterfactual_value = lambda x, y: -x  # Should be -1
 
-    updated_value, (old_value, prediction_error) = asymmetric_rescorla_wagner_update(
-        value, outcome_chosen, alpha_p, alpha_n, 
-        counterfactual_value=counterfactual_value,
-        update_all_options=True
+    updated_value, (old_value, prediction_error) = (
+        asymmetric_rescorla_wagner_update(
+            value,
+            outcome_chosen,
+            alpha_p,
+            alpha_n,
+            counterfactual_value=counterfactual_value,
+            update_all_options=True,
+        )
     )
 
     # Both actions should update, even the unchosen one
     assert np.isclose(updated_value[0], 0.1)  # Toward actual outcome
     assert np.isclose(updated_value[1], -0.2)  # Toward counterfactual value
+
 
 def test_asymmetric_rescorla_wagner_scaled_counterfactual():
     value = jnp.array([0.5, 0.5])
@@ -867,15 +971,21 @@ def test_asymmetric_rescorla_wagner_scaled_counterfactual():
     alpha_p = jnp.array(0.1)
     alpha_n = jnp.array(0.2)
     counterfactual_value = lambda x, y: 0.25 * x  # 25% of chosen value
-    
-    updated_value, (old_value, prediction_error) = asymmetric_rescorla_wagner_update(
-        value, outcome_chosen, alpha_p, alpha_n,
-        counterfactual_value=counterfactual_value,
-        update_all_options=True
+
+    updated_value, (old_value, prediction_error) = (
+        asymmetric_rescorla_wagner_update(
+            value,
+            outcome_chosen,
+            alpha_p,
+            alpha_n,
+            counterfactual_value=counterfactual_value,
+            update_all_options=True,
+        )
     )
-    
+
     assert np.isclose(updated_value[0], 0.55)  # Normal update
     assert np.isclose(updated_value[1], 0.45)  # Update toward 0.5
+
 
 def test_asymmetric_rescorla_wagner_array_update_all_options():
     value = jnp.array([0.5, 0.5, 0.5])
@@ -884,15 +994,21 @@ def test_asymmetric_rescorla_wagner_array_update_all_options():
     alpha_n = jnp.array(0.2)
     counterfactual_value = lambda x, y: 0.3 * jnp.ones_like(x)
 
-    updated_value, (old_value, prediction_error) = asymmetric_rescorla_wagner_update(
-        value, outcome_chosen, alpha_p, alpha_n, 
-        counterfactual_value=counterfactual_value,
-        update_all_options=True
+    updated_value, (old_value, prediction_error) = (
+        asymmetric_rescorla_wagner_update(
+            value,
+            outcome_chosen,
+            alpha_p,
+            alpha_n,
+            counterfactual_value=counterfactual_value,
+            update_all_options=True,
+        )
     )
 
     assert np.isclose(updated_value[0], 0.55)  # Toward 1.0
     assert np.isclose(updated_value[1], 0.46)  # Toward 0.3
     assert np.isclose(updated_value[2], 0.46)  # Toward 0.3
+
 
 def test_asymmetric_rescorla_wagner_array_negative_counterfactual():
     value = jnp.array([0.0, 0.0, 0.0])
@@ -901,15 +1017,21 @@ def test_asymmetric_rescorla_wagner_array_negative_counterfactual():
     alpha_n = jnp.array(0.2)
     counterfactual_value = lambda x, y: -x  # Opposite of chosen values
 
-    updated_value, (old_value, prediction_error) = asymmetric_rescorla_wagner_update(
-        value, outcome_chosen, alpha_p, alpha_n,
-        counterfactual_value=counterfactual_value,
-        update_all_options=True
+    updated_value, (old_value, prediction_error) = (
+        asymmetric_rescorla_wagner_update(
+            value,
+            outcome_chosen,
+            alpha_p,
+            alpha_n,
+            counterfactual_value=counterfactual_value,
+            update_all_options=True,
+        )
     )
 
-    assert np.isclose(updated_value[0], 0.1) 
-    assert np.isclose(updated_value[1], 0.0)    
-    assert np.isclose(updated_value[2], -0.1)  
+    assert np.isclose(updated_value[0], 0.1)
+    assert np.isclose(updated_value[1], 0.0)
+    assert np.isclose(updated_value[2], -0.1)
+
 
 def test_asymmetric_rescorla_wagner_array_scaled_counterfactual():
     value = jnp.array([0.5, 0.5, 0.5])
@@ -918,12 +1040,195 @@ def test_asymmetric_rescorla_wagner_array_scaled_counterfactual():
     alpha_n = jnp.array(0.2)
     counterfactual_value = lambda x, y: 0.25 * x  # 25% of chosen values
 
-    updated_value, (old_value, prediction_error) = asymmetric_rescorla_wagner_update(
-        value, outcome_chosen, alpha_p, alpha_n,
-        counterfactual_value=counterfactual_value,
-        update_all_options=True
+    updated_value, (old_value, prediction_error) = (
+        asymmetric_rescorla_wagner_update(
+            value,
+            outcome_chosen,
+            alpha_p,
+            alpha_n,
+            counterfactual_value=counterfactual_value,
+            update_all_options=True,
+        )
     )
 
-    assert np.isclose(updated_value[0], 0.55)  
-    assert np.isclose(updated_value[1], 0.44)  
-    assert np.isclose(updated_value[2], 0.43)  
+    assert np.isclose(updated_value[0], 0.55)
+    assert np.isclose(updated_value[1], 0.44)
+    assert np.isclose(updated_value[2], 0.43)
+
+
+def test_asymmetric_rescorla_wagner_update_choice_sticky_basic():
+    """Test basic functionality of sticky choice updating"""
+    # Initialize test values
+    key = jax.random.PRNGKey(0)
+    value = jnp.array([0.5, 0.5])  # Equal initial values
+    prev_choice = jnp.array([1, 0])  # Previously chose first option
+    outcome = 1.0
+    alpha_p = 0.5
+    alpha_n = 0.5
+    temperature = 1.0
+    stickiness = 1.0  # Strong stickiness
+    n_actions = 2
+
+    # Run update
+    (new_value, new_choice), (
+        old_value,
+        choice_p,
+        choice_array,
+        prediction_error,
+    ) = asymmetric_rescorla_wagner_update_choice_sticky(
+        (value, prev_choice),
+        (outcome, key),
+        alpha_p,
+        alpha_n,
+        temperature,
+        stickiness,
+        n_actions,
+    )
+
+    # Basic assertions
+    assert new_value.shape == (2,)
+    assert choice_p.shape == (2,)
+    assert choice_array.shape == (2,)
+    assert jnp.sum(choice_p) == pytest.approx(1.0)  # Probabilities sum to 1
+
+
+def test_stickiness_effect():
+    """Test that positive stickiness increases probability of repeating choices"""
+    key = jax.random.PRNGKey(0)
+    value = jnp.array([0.5, 0.5])  # Equal values
+    prev_choice = jnp.array([1, 0])  # Previously chose first option
+    outcome = 0.5
+
+    # Run with no stickiness
+    (_, _), (_, choice_p_no_sticky, _, _) = (
+        asymmetric_rescorla_wagner_update_choice_sticky(
+            (value, prev_choice),
+            (outcome, key),
+            0.5,
+            0.5,
+            1.0,
+            0.0,
+            2,  # No stickiness
+        )
+    )
+
+    # Run with positive stickiness
+    (_, _), (_, choice_p_sticky, _, _) = (
+        asymmetric_rescorla_wagner_update_choice_sticky(
+            (value, prev_choice),
+            (outcome, key),
+            0.5,
+            0.5,
+            1.0,
+            2.0,
+            2,  # Strong positive stickiness
+        )
+    )
+
+    # Probability of repeating previous choice should be higher with stickiness
+    assert choice_p_sticky[0] > choice_p_no_sticky[0]
+
+
+def test_negative_stickiness():
+    """Test that negative stickiness decreases probability of repeating choices"""
+    key = jax.random.PRNGKey(0)
+    value = jnp.array([0.5, 0.5])
+    prev_choice = jnp.array([1, 0])
+    outcome = 0.5
+
+    # Run with negative stickiness
+    (_, _), (_, choice_p_neg_sticky, _, _) = (
+        asymmetric_rescorla_wagner_update_choice_sticky(
+            (value, prev_choice),
+            (outcome, key),
+            0.5,
+            0.5,
+            1.0,
+            -2.0,
+            2,  # Strong negative stickiness
+        )
+    )
+
+    # Run with no stickiness
+    (_, _), (_, choice_p_no_sticky, _, _) = (
+        asymmetric_rescorla_wagner_update_choice_sticky(
+            (value, prev_choice), (outcome, key), 0.5, 0.5, 1.0, 0.0, 2
+        )
+    )
+
+    # Probability of repeating previous choice should be lower with negative stickiness
+    assert choice_p_neg_sticky[0] < choice_p_no_sticky[0]
+
+
+def test_learning_rates():
+    """Test that positive and negative learning rates work correctly"""
+    key = jax.random.PRNGKey(0)
+    value = jnp.array([0.5, 0.5])
+    prev_choice = jnp.array([1, 0])
+
+    # Test positive learning rate
+    (new_value_pos, choice_array), _ = asymmetric_rescorla_wagner_update_choice_sticky(
+        (value, prev_choice),
+        (1.0, key),  # Positive outcome
+        0.5,
+        0.1,
+        1.0,
+        0.0,
+        2,  # Higher positive learning rate
+    )
+
+    # Test negative learning rate
+    (new_value_neg, choice_array), _ = asymmetric_rescorla_wagner_update_choice_sticky(
+        (value, prev_choice),
+        (0.0, key),  # Negative outcome
+        0.1,
+        0.5,
+        1.0,
+        0.0,
+        2,  # Higher negative learning rate
+    )
+
+    # Verify learning rate effects
+    assert new_value_pos[choice_array.astype(bool)] == 0.75
+    assert new_value_neg[choice_array.astype(bool)] == 0.25
+
+
+def test_temperature_effect():
+    """Test that temperature affects choice randomness"""
+    key = jax.random.PRNGKey(0)
+    value = jnp.array([0.6, 0.4])  # Slightly different values
+    prev_choice = jnp.array([0, 0])  # No previous choice effect
+    outcome = 0.5
+
+    # Run with high temperature (more random)
+    (_, _), (_, choice_p_high_temp, _, _) = (
+        asymmetric_rescorla_wagner_update_choice_sticky(
+            (value, prev_choice),
+            (outcome, key),
+            0.5,
+            0.5,
+            5.0,
+            0.0,
+            2,  # High temperature
+        )
+    )
+
+    # Run with low temperature (more deterministic)
+    (_, _), (_, choice_p_low_temp, _, _) = (
+        asymmetric_rescorla_wagner_update_choice_sticky(
+            (value, prev_choice),
+            (outcome, key),
+            0.5,
+            0.5,
+            0.1,
+            0.0,
+            2,  # Low temperature
+        )
+    )
+
+    # High temperature should lead to more similar probabilities
+    print(choice_p_high_temp)
+    print(choice_p_low_temp)
+    high_temp_diff = jnp.abs(choice_p_high_temp[0] - choice_p_high_temp[1])
+    low_temp_diff = jnp.abs(choice_p_low_temp[0] - choice_p_low_temp[1])
+    assert high_temp_diff < low_temp_diff
