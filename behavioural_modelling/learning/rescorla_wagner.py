@@ -4,6 +4,25 @@ from typing import Tuple, Union
 from ..decision_rules import softmax, softmax_stickiness
 from ..utils import choice_from_action_p
 
+def complement_counterfactual(reward, chosen):
+    """
+    Counterfactual function that sets the value of unchosen actions to the
+    complement of the value of chosen actions.
+
+    Args:
+        reward (jax.typing.ArrayLike): The reward received.
+        chosen (jax.typing.ArrayLike): A binary array indicating which
+            action(s) were chosen.
+
+    Returns:
+        jax.typing.ArrayLike: The counterfactual value.
+    """
+    return jnp.where(
+        chosen == 1, 
+        0.0, 
+        1.0 - jnp.sum(reward * jnp.asarray(chosen == 1, dtype=reward.dtype))
+    )
+
 
 def asymmetric_rescorla_wagner_update(
     value: jax.typing.ArrayLike,
@@ -12,7 +31,7 @@ def asymmetric_rescorla_wagner_update(
     ],
     alpha_p: jax.typing.ArrayLike,
     alpha_n: jax.typing.ArrayLike,
-    counterfactual_value: callable = lambda x, y: (1 - x) * (1 - y),
+    counterfactual_value: callable = complement_counterfactual,
     update_all_options: bool = False,
 ) -> Tuple[jax.typing.ArrayLike, jax.typing.ArrayLike]:
     """
@@ -28,12 +47,20 @@ def asymmetric_rescorla_wagner_update(
     Value estimates are only updated for chosen actions. For unchosen
     actions, the prediction error is set to 0.
 
-    Counterfactualy updating can be used to set the value of unchosen actions
+    Counterfactual updating can be used to set the value of unchosen actions
     according to a function of the value of chosen actions. This can be useful
     in cases where the value of unchosen actions should be set to a specific
     value, such as the negative of the value of chosen actions. By default this
-    is set to `x, y: (1 - x) * (1 - y)`, which sets the value of unchosen
-    actions to the negative of the value of chosen actions.
+    function sets the value of unchosen actions to the complement of the value
+    of chosen actions:
+
+    ```python
+    counterfactual_value: callable = lambda reward, chosen: jnp.where(
+        chosen == 1, 
+        0.0, 
+        1.0 - jnp.sum(reward * jnp.asarray(chosen == 1, dtype=reward.dtype))
+    )
+    ```
 
     Args:
         value (jax.typing.ArrayLike): The current estimated value of a
@@ -52,11 +79,9 @@ def asymmetric_rescorla_wagner_update(
             no effect if `update_all_options` is set to False.
             The function takes as input the values of `outcome` and `chosen`
             (i.e., the two elements of the `outcome_chosen` argument).
-            Defaults to `lambda x, y: (1 - x) * (1 - y)`, which assumes
-            outcomes are binary (0 or 1), and sets the value of unchosen
-            actions to complement the value of chosen actions (i.e.,
-            a chosen value of 1 will set the unchosen value to 0 and
-            vice versa).
+            By default, this assumes that outcomes are binary and sets
+            the value of unchosen actions to the complement of the value
+            of chosen actions.
         update_all_options (bool, optional): Whether to update the value
             estimates for all options, regardless of whether they were
             chosen. Defaults to False.
@@ -107,7 +132,7 @@ def asymmetric_rescorla_wagner_update_choice(
     alpha_n: float,
     temperature: float,
     n_actions: int,
-    counterfactual_value: callable = lambda x, y: (1 - x) * (1 - y),
+    counterfactual_value: callable = complement_counterfactual,
     update_all_options: bool = False,
 ) -> jax.Array:
     """
@@ -131,11 +156,9 @@ def asymmetric_rescorla_wagner_update_choice(
             no effect if `update_all_options` is set to False.
             The function takes as input the values of `outcome` and `chosen`
             (i.e., the two elements of the `outcome_chosen` argument).
-            Defaults to `lambda x, y: (1 - x) * (1 - y)`, which assumes
-            outcomes are binary (0 or 1), and sets the value of unchosen
-            actions to complement the value of chosen actions (i.e.,
-            a chosen value of 1 will set the unchosen value to 0 and
-            vice versa).
+            By default, this assumes that outcomes are binary and sets
+            the value of unchosen actions to the complement of the value
+            of chosen actions.
         update_all_options (bool, optional): Whether to update the value
             estimates for all options, regardless of whether they were
 
@@ -154,6 +177,8 @@ def asymmetric_rescorla_wagner_update_choice(
 
     # Unpack outcome and key
     outcome, key = outcome_key
+
+    # Ensure outcome, chosen and value are arrays with 1 dimension
 
     # Get choice probabilities
     choice_p = softmax(value[None, :], temperature).squeeze()
@@ -191,7 +216,7 @@ def asymmetric_rescorla_wagner_update_choice_sticky(
     temperature: float,
     stickiness: float,
     n_actions: int,
-    counterfactual_value: callable = lambda x, y: (1 - x) * (1 - y),
+    counterfactual_value: callable = complement_counterfactual,
     update_all_options: bool = False,
 ) -> jax.Array:
     """

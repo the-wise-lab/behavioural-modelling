@@ -895,6 +895,21 @@ def test_asymmetric_rescorla_wagner_counterfactual_default():
     # Unchosen action should not be updated by default
     assert np.isclose(updated_value[1], 0.5)  # 0.5 + 0.2 * (0.0 - 0.5)
 
+def test_asymmetric_rescorla_wagner_counterfactual_default_multiple_outcomes():
+    value = jnp.array([0.5, 0.5])
+    outcome_chosen = (jnp.array([1.0, 0.0]), jnp.array([1.0, 0.0]))
+    alpha_p = jnp.array(0.5)
+    alpha_n = jnp.array(0.5)
+
+    updated_value, (old_value, prediction_error) = (
+        asymmetric_rescorla_wagner_update(
+            value, outcome_chosen, alpha_p, alpha_n, update_all_options=True
+        )
+    )
+
+    # Chosen action should update toward outcome
+    assert np.isclose(updated_value[0], 0.75) 
+    assert np.isclose(updated_value[1], 0.25)  
 
 def test_asymmetric_rescorla_wagner_custom_counterfactual_without_updating_all_options():
     value = jnp.array([0.5, 0.5])
