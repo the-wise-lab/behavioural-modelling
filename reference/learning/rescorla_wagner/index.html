@@ -1,0 +1,2974 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../beta_models/">
+      
+      
+        <link rel="next" href="../../planning/dynamic_programming/">
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.17">
+    
+    
+      
+        <title>Rescorla-Wagner - Behavioural Modelling</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.bcfcd587.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="../../../css/mkdocstrings.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="blue" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#rescorla-wagner-models" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="Behavioural Modelling" class="md-header__button md-logo" aria-label="Behavioural Modelling" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Behavioural Modelling
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Rescorla-Wagner
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="blue" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 2c-1.82 0-3.53.5-5 1.35C8 5.08 10 8.3 10 12s-2 6.92-5 8.65C6.47 21.5 8.18 22 10 22a10 10 0 0 0 10-10A10 10 0 0 0 10 2Z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="blue" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12c0-2.42-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var media,input,key,value,palette=__md_get("__palette");if(palette&&palette.color){"(prefers-color-scheme)"===palette.color.media&&(media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']"),palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent"));for([key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/the-wise-lab/behavioural-modelling" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    the-wise-lab/behavioural-modelling
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Behavioural Modelling" class="md-nav__button md-logo" aria-label="Behavioural Modelling" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    Behavioural Modelling
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/the-wise-lab/behavioural-modelling" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    the-wise-lab/behavioural-modelling
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Home
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    API Reference
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            API Reference
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_1" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2_1" id="__nav_2_1_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Learning
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_1_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2_1">
+            <span class="md-nav__icon md-icon"></span>
+            Learning
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../beta_models/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Beta Models
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Rescorla-Wagner
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Rescorla-Wagner
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#behavioural_modelling.learning.rescorla_wagner" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-module"></code>&nbsp;rescorla_wagner
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label=" rescorla_wagner">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_rescorla_wagner_update" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;asymmetric_rescorla_wagner_update
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label=" asymmetric_rescorla_wagner_update">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_rescorla_wagner_update(value)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;value
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_rescorla_wagner_update(alpha_p)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;alpha_p
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_rescorla_wagner_update(alpha_n)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;alpha_n
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_rescorla_wagner_update(counterfactual_value)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;counterfactual_value
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_rescorla_wagner_update(update_all_options)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;update_all_options
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_rescorla_wagner_update_choice" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;asymmetric_rescorla_wagner_update_choice
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label=" asymmetric_rescorla_wagner_update_choice">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_rescorla_wagner_update_choice(value)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;value
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_rescorla_wagner_update_choice(outcome_key)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;outcome_key
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_rescorla_wagner_update_choice(alpha_p)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;alpha_p
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_rescorla_wagner_update_choice(alpha_n)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;alpha_n
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_rescorla_wagner_update_choice(temperature)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;temperature
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_rescorla_wagner_update_choice(n_actions)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;n_actions
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_rescorla_wagner_update_choice(counterfactual_value)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;counterfactual_value
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_rescorla_wagner_update_choice(update_all_options)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;update_all_options
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_rescorla_wagner_update_choice_sticky" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;asymmetric_rescorla_wagner_update_choice_sticky
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label=" asymmetric_rescorla_wagner_update_choice_sticky">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_rescorla_wagner_update_choice_sticky(value_choice)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;value_choice
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_rescorla_wagner_update_choice_sticky(outcome_key)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;outcome_key
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_rescorla_wagner_update_choice_sticky(alpha_p)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;alpha_p
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_rescorla_wagner_update_choice_sticky(alpha_n)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;alpha_n
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_rescorla_wagner_update_choice_sticky(temperature)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;temperature
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_rescorla_wagner_update_choice_sticky(stickiness)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;stickiness
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_rescorla_wagner_update_choice_sticky(n_actions)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;n_actions
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_rescorla_wagner_update_choice_sticky(counterfactual_value)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;counterfactual_value
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_rescorla_wagner_update_choice_sticky(update_all_options)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;update_all_options
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_volatile_dynamic_rescorla_wagner_update_choice" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;asymmetric_volatile_dynamic_rescorla_wagner_update_choice
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label=" asymmetric_volatile_dynamic_rescorla_wagner_update_choice">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_volatile_dynamic_rescorla_wagner_update_choice(value)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;value
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_volatile_dynamic_rescorla_wagner_update_choice(alpha_base)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;alpha_base
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_volatile_dynamic_rescorla_wagner_update_choice(alpha_volatility)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;alpha_volatility
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_volatile_dynamic_rescorla_wagner_update_choice(alpha_pos_neg)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;alpha_pos_neg
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_volatile_dynamic_rescorla_wagner_update_choice(alpha_interaction)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;alpha_interaction
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_volatile_dynamic_rescorla_wagner_update_choice(temperature)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;temperature
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_volatile_dynamic_rescorla_wagner_update_choice(n_actions)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;n_actions
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_volatile_rescorla_wagner_single_value_update_choice" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;asymmetric_volatile_rescorla_wagner_single_value_update_choice
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label=" asymmetric_volatile_rescorla_wagner_single_value_update_choice">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_volatile_rescorla_wagner_single_value_update_choice(value)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;value
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_volatile_rescorla_wagner_single_value_update_choice(alpha_base)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;alpha_base
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_volatile_rescorla_wagner_single_value_update_choice(alpha_volatility)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;alpha_volatility
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_volatile_rescorla_wagner_single_value_update_choice(alpha_pos_neg)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;alpha_pos_neg
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_volatile_rescorla_wagner_single_value_update_choice(alpha_interaction)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;alpha_interaction
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_volatile_rescorla_wagner_single_value_update_choice(temperature)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;temperature
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_volatile_rescorla_wagner_single_value_update_choice(n_actions)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;n_actions
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_volatile_rescorla_wagner_update" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;asymmetric_volatile_rescorla_wagner_update
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label=" asymmetric_volatile_rescorla_wagner_update">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_volatile_rescorla_wagner_update(value)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;value
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_volatile_rescorla_wagner_update(alpha_base)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;alpha_base
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_volatile_rescorla_wagner_update(alpha_volatility)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;alpha_volatility
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_volatile_rescorla_wagner_update(alpha_pos_neg)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;alpha_pos_neg
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_volatile_rescorla_wagner_update(alpha_interaction)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;alpha_interaction
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#behavioural_modelling.learning.rescorla_wagner.complement_counterfactual" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;complement_counterfactual
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label=" complement_counterfactual">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#behavioural_modelling.learning.rescorla_wagner.complement_counterfactual(reward)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;reward
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#behavioural_modelling.learning.rescorla_wagner.complement_counterfactual(chosen)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;chosen
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_2" id="__nav_2_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Planning
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_2">
+            <span class="md-nav__icon md-icon"></span>
+            Planning
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../planning/dynamic_programming/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Dynamic Programming
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../decision_rules/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Decision Rules
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../utils/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Utils
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Examples
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Examples
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_1" id="__nav_3_1_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Learning
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_1">
+            <span class="md-nav__icon md-icon"></span>
+            Learning
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../examples/learning/beta_learning_models/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Beta Model Examples
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_2" id="__nav_3_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Planning
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_2">
+            <span class="md-nav__icon md-icon"></span>
+            Planning
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../examples/planning/value_iteration/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Dynamic Programming Examples
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_3" id="__nav_3_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Making decision
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_3">
+            <span class="md-nav__icon md-icon"></span>
+            Making decision
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../examples/decisions/simulating_choices/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Simulating choices
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../examples/decisions/decision_rules/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Decision rules
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#behavioural_modelling.learning.rescorla_wagner" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-module"></code>&nbsp;rescorla_wagner
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label=" rescorla_wagner">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_rescorla_wagner_update" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;asymmetric_rescorla_wagner_update
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label=" asymmetric_rescorla_wagner_update">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_rescorla_wagner_update(value)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;value
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_rescorla_wagner_update(alpha_p)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;alpha_p
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_rescorla_wagner_update(alpha_n)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;alpha_n
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_rescorla_wagner_update(counterfactual_value)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;counterfactual_value
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_rescorla_wagner_update(update_all_options)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;update_all_options
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_rescorla_wagner_update_choice" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;asymmetric_rescorla_wagner_update_choice
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label=" asymmetric_rescorla_wagner_update_choice">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_rescorla_wagner_update_choice(value)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;value
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_rescorla_wagner_update_choice(outcome_key)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;outcome_key
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_rescorla_wagner_update_choice(alpha_p)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;alpha_p
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_rescorla_wagner_update_choice(alpha_n)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;alpha_n
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_rescorla_wagner_update_choice(temperature)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;temperature
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_rescorla_wagner_update_choice(n_actions)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;n_actions
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_rescorla_wagner_update_choice(counterfactual_value)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;counterfactual_value
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_rescorla_wagner_update_choice(update_all_options)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;update_all_options
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_rescorla_wagner_update_choice_sticky" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;asymmetric_rescorla_wagner_update_choice_sticky
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label=" asymmetric_rescorla_wagner_update_choice_sticky">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_rescorla_wagner_update_choice_sticky(value_choice)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;value_choice
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_rescorla_wagner_update_choice_sticky(outcome_key)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;outcome_key
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_rescorla_wagner_update_choice_sticky(alpha_p)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;alpha_p
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_rescorla_wagner_update_choice_sticky(alpha_n)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;alpha_n
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_rescorla_wagner_update_choice_sticky(temperature)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;temperature
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_rescorla_wagner_update_choice_sticky(stickiness)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;stickiness
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_rescorla_wagner_update_choice_sticky(n_actions)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;n_actions
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_rescorla_wagner_update_choice_sticky(counterfactual_value)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;counterfactual_value
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_rescorla_wagner_update_choice_sticky(update_all_options)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;update_all_options
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_volatile_dynamic_rescorla_wagner_update_choice" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;asymmetric_volatile_dynamic_rescorla_wagner_update_choice
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label=" asymmetric_volatile_dynamic_rescorla_wagner_update_choice">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_volatile_dynamic_rescorla_wagner_update_choice(value)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;value
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_volatile_dynamic_rescorla_wagner_update_choice(alpha_base)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;alpha_base
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_volatile_dynamic_rescorla_wagner_update_choice(alpha_volatility)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;alpha_volatility
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_volatile_dynamic_rescorla_wagner_update_choice(alpha_pos_neg)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;alpha_pos_neg
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_volatile_dynamic_rescorla_wagner_update_choice(alpha_interaction)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;alpha_interaction
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_volatile_dynamic_rescorla_wagner_update_choice(temperature)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;temperature
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_volatile_dynamic_rescorla_wagner_update_choice(n_actions)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;n_actions
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_volatile_rescorla_wagner_single_value_update_choice" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-attribute"></code>&nbsp;asymmetric_volatile_rescorla_wagner_single_value_update_choice
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label=" asymmetric_volatile_rescorla_wagner_single_value_update_choice">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_volatile_rescorla_wagner_single_value_update_choice(value)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;value
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_volatile_rescorla_wagner_single_value_update_choice(alpha_base)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;alpha_base
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_volatile_rescorla_wagner_single_value_update_choice(alpha_volatility)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;alpha_volatility
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_volatile_rescorla_wagner_single_value_update_choice(alpha_pos_neg)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;alpha_pos_neg
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_volatile_rescorla_wagner_single_value_update_choice(alpha_interaction)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;alpha_interaction
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_volatile_rescorla_wagner_single_value_update_choice(temperature)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;temperature
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_volatile_rescorla_wagner_single_value_update_choice(n_actions)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;n_actions
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_volatile_rescorla_wagner_update" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;asymmetric_volatile_rescorla_wagner_update
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label=" asymmetric_volatile_rescorla_wagner_update">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_volatile_rescorla_wagner_update(value)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;value
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_volatile_rescorla_wagner_update(alpha_base)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;alpha_base
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_volatile_rescorla_wagner_update(alpha_volatility)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;alpha_volatility
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_volatile_rescorla_wagner_update(alpha_pos_neg)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;alpha_pos_neg
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_volatile_rescorla_wagner_update(alpha_interaction)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;alpha_interaction
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#behavioural_modelling.learning.rescorla_wagner.complement_counterfactual" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-function"></code>&nbsp;complement_counterfactual
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label=" complement_counterfactual">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#behavioural_modelling.learning.rescorla_wagner.complement_counterfactual(reward)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;reward
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#behavioural_modelling.learning.rescorla_wagner.complement_counterfactual(chosen)" class="md-nav__link">
+    <span class="md-ellipsis">
+      <code class="doc-symbol doc-symbol-toc doc-symbol-parameter"></code>&nbsp;chosen
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+<h1 id="rescorla-wagner-models">Rescorla-Wagner Models</h1>
+<p>This module incorporates includes various implementations of the Rescorla-Wagner model.</p>
+
+
+<div class="doc doc-object doc-module">
+
+
+
+<h2 id="behavioural_modelling.learning.rescorla_wagner" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-module"></code>            <span class="doc doc-object-name doc-module-name">rescorla_wagner</span>
+
+
+</h2>
+
+    <div class="doc doc-contents first">
+
+
+
+
+
+
+
+
+
+<p><span class="doc-section-title">Functions:</span></p>
+    <ul>
+          <li class="doc-section-item field-body">
+            <b><code><a class="autorefs autorefs-internal" title="behavioural_modelling.learning.rescorla_wagner.asymmetric_volatile_rescorla_wagner_update" href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_volatile_rescorla_wagner_update">asymmetric_volatile_rescorla_wagner_update</a></code></b>
+            –
+            <div class="doc-md-description">
+              <p>Updates the estimated value of a state or action using a variant</p>
+            </div>
+          </li>
+          <li class="doc-section-item field-body">
+            <b><code><a class="autorefs autorefs-internal" title="behavioural_modelling.learning.rescorla_wagner.complement_counterfactual" href="#behavioural_modelling.learning.rescorla_wagner.complement_counterfactual">complement_counterfactual</a></code></b>
+            –
+            <div class="doc-md-description">
+              <p>Counterfactual function that sets the value of unchosen actions to the</p>
+            </div>
+          </li>
+    </ul>
+
+
+
+
+<p><span class="doc-section-title">Attributes:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+          <b><code><a class="autorefs autorefs-internal" title="behavioural_modelling.learning.rescorla_wagner.asymmetric_rescorla_wagner_update" href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_rescorla_wagner_update">asymmetric_rescorla_wagner_update</a></code></b>
+              (<code><a class="autorefs autorefs-external" title="typing.Tuple" href="https://docs.python.org/3/library/typing.html#typing.Tuple">Tuple</a>[<span title="jax.typing.ArrayLike">ArrayLike</span>, <span title="jax.typing.ArrayLike">ArrayLike</span>]</code>)
+          –
+          <div class="doc-md-description">
+            <p>Updates the estimated value of a state or action using the Asymmetric</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code><a class="autorefs autorefs-internal" title="behavioural_modelling.learning.rescorla_wagner.asymmetric_rescorla_wagner_update_choice" href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_rescorla_wagner_update_choice">asymmetric_rescorla_wagner_update_choice</a></code></b>
+              (<code><span title="jax.Array">Array</span></code>)
+          –
+          <div class="doc-md-description">
+            <p>Updates the value estimate using the asymmetric Rescorla-Wagner</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code><a class="autorefs autorefs-internal" title="behavioural_modelling.learning.rescorla_wagner.asymmetric_rescorla_wagner_update_choice_sticky" href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_rescorla_wagner_update_choice_sticky">asymmetric_rescorla_wagner_update_choice_sticky</a></code></b>
+              (<code><span title="jax.Array">Array</span></code>)
+          –
+          <div class="doc-md-description">
+            <p>Updates the value estimate using the asymmetric Rescorla-Wagner</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code><a class="autorefs autorefs-internal" title="behavioural_modelling.learning.rescorla_wagner.asymmetric_volatile_dynamic_rescorla_wagner_update_choice" href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_volatile_dynamic_rescorla_wagner_update_choice">asymmetric_volatile_dynamic_rescorla_wagner_update_choice</a></code></b>
+              (<code><span title="jax.Array">Array</span></code>)
+          –
+          <div class="doc-md-description">
+            <p>Updates the value estimate using a variant of the Rescorla-Wagner</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+          <b><code><a class="autorefs autorefs-internal" title="behavioural_modelling.learning.rescorla_wagner.asymmetric_volatile_rescorla_wagner_single_value_update_choice" href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_volatile_rescorla_wagner_single_value_update_choice">asymmetric_volatile_rescorla_wagner_single_value_update_choice</a></code></b>
+              (<code><span title="jax.Array">Array</span></code>)
+          –
+          <div class="doc-md-description">
+            <p>Updates the value estimate using the asymmetric volatile dynamic</p>
+          </div>
+        </li>
+    </ul>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="behavioural_modelling.learning.rescorla_wagner.asymmetric_rescorla_wagner_update" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <span class="doc doc-object-name doc-attribute-name">asymmetric_rescorla_wagner_update</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-module-attribute"><code>module-attribute</code></small>
+  </span>
+
+</h3>
+<div class="doc-signature highlight"><pre><span></span><code><span class="n">asymmetric_rescorla_wagner_update</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Tuple" href="https://docs.python.org/3/library/typing.html#typing.Tuple">Tuple</a></span><span class="p">[</span><span class="n"><span title="jax.typing.ArrayLike">ArrayLike</span></span><span class="p">,</span> <span class="n"><span title="jax.typing.ArrayLike">ArrayLike</span></span><span class="p">]</span> <span class="o">=</span> <span class="n"><span title="jax.jit">jit</span></span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" title="behavioural_modelling.learning.rescorla_wagner.asymmetric_rescorla_wagner_update" href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_rescorla_wagner_update">asymmetric_rescorla_wagner_update</a></span><span class="p">,</span> <span class="n"><span title="jax.jit(static_argnames)">static_argnames</span></span><span class="o">=</span><span class="s1">&#39;counterfactual_value&#39;</span><span class="p">)</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Updates the estimated value of a state or action using the Asymmetric
+Rescorla-Wagner learning rule.</p>
+<p>The function calculates the prediction error as the difference between
+the actual outcome and the current estimated value. It then updates the
+estimated value based on the prediction error and the learning rate,
+which is determined by whether the prediction error is positive or
+negative.</p>
+<p>Value estimates are only updated for chosen actions. For unchosen
+actions, the prediction error is set to 0.</p>
+<p>Counterfactual updating can be used to set the value of unchosen actions
+according to a function of the value of chosen actions. This can be useful
+in cases where the value of unchosen actions should be set to a specific
+value, such as the negative of the value of chosen actions. By default this
+function sets the value of unchosen actions to the complement of the value
+of chosen actions:</p>
+<pre><code class="language-python">counterfactual_value: callable = lambda reward, chosen: jnp.where(
+    chosen == 1, 
+    0.0, 
+    1.0 - jnp.sum(reward * jnp.asarray(chosen == 1, dtype=reward.dtype))
+)
+</code></pre>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+<h4 id="behavioural_modelling.learning.rescorla_wagner.asymmetric_rescorla_wagner_update(value)" class="doc doc-heading doc-heading-parameter">              <b><code>value</code></b>
+</h4>              (<code><span title="jax.typing.ArrayLike">ArrayLike</span></code>)
+          –
+          <div class="doc-md-description">
+            <p>The current estimated value of a
+state or action.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+<h4 id="behavioural_modelling.learning.rescorla_wagner.asymmetric_rescorla_wagner_update(alpha_p)" class="doc doc-heading doc-heading-parameter">              <b><code>alpha_p</code></b>
+</h4>              (<code><span title="jax.typing.ArrayLike">ArrayLike</span></code>)
+          –
+          <div class="doc-md-description">
+            <p>The learning rate used when the
+prediction error is positive.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+<h4 id="behavioural_modelling.learning.rescorla_wagner.asymmetric_rescorla_wagner_update(alpha_n)" class="doc doc-heading doc-heading-parameter">              <b><code>alpha_n</code></b>
+</h4>              (<code><span title="jax.typing.ArrayLike">ArrayLike</span></code>)
+          –
+          <div class="doc-md-description">
+            <p>The learning rate used when the
+prediction error is negative.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+<h4 id="behavioural_modelling.learning.rescorla_wagner.asymmetric_rescorla_wagner_update(counterfactual_value)" class="doc doc-heading doc-heading-parameter">              <b><code>counterfactual_value</code></b>
+</h4>              (<code>callable]</code>)
+          –
+          <div class="doc-md-description">
+            <p>The value
+to use for unchosen actions. This should be provided as a
+callable function that returns a value. This will have
+no effect if <code>update_all_options</code> is set to False.
+The function takes as input the values of <code>outcome</code> and <code>chosen</code>
+(i.e., the two elements of the <code>outcome_chosen</code> argument).
+By default, this assumes that outcomes are binary and sets
+the value of unchosen actions to the complement of the value
+of chosen actions.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+<h4 id="behavioural_modelling.learning.rescorla_wagner.asymmetric_rescorla_wagner_update(update_all_options)" class="doc doc-heading doc-heading-parameter">              <b><code>update_all_options</code></b>
+</h4>              (<code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>)
+          –
+          <div class="doc-md-description">
+            <p>Whether to update the value
+estimates for all options, regardless of whether they were
+chosen. Defaults to False.</p>
+          </div>
+        </li>
+    </ul>
+
+
+<p><span class="doc-section-title">Returns:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+              <code><a class="autorefs autorefs-external" title="typing.Tuple" href="https://docs.python.org/3/library/typing.html#typing.Tuple">Tuple</a>[<span title="jax.typing.ArrayLike">ArrayLike</span>, <span title="jax.typing.ArrayLike">ArrayLike</span>]</code>
+          –
+          <div class="doc-md-description">
+            <p>Tuple[jax.typing.ArrayLike, jax.typing.ArrayLike]: The updated value
+and the prediction error.</p>
+          </div>
+        </li>
+    </ul>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="behavioural_modelling.learning.rescorla_wagner.asymmetric_rescorla_wagner_update_choice" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <span class="doc doc-object-name doc-attribute-name">asymmetric_rescorla_wagner_update_choice</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-module-attribute"><code>module-attribute</code></small>
+  </span>
+
+</h3>
+<div class="doc-signature highlight"><pre><span></span><code><span class="n">asymmetric_rescorla_wagner_update_choice</span><span class="p">:</span> <span class="n"><span title="jax.Array">Array</span></span> <span class="o">=</span> <span class="n"><span title="jax.jit">jit</span></span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" title="behavioural_modelling.learning.rescorla_wagner.asymmetric_rescorla_wagner_update_choice" href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_rescorla_wagner_update_choice">asymmetric_rescorla_wagner_update_choice</a></span><span class="p">,</span> <span class="n"><span title="jax.jit(static_argnums)">static_argnums</span></span><span class="o">=</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Updates the value estimate using the asymmetric Rescorla-Wagner
+algorithm, and chooses an option based on the softmax function.</p>
+<p>See <code>asymmetric_rescorla_wagner_update</code> for details on the learning
+rule.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+<h4 id="behavioural_modelling.learning.rescorla_wagner.asymmetric_rescorla_wagner_update_choice(value)" class="doc doc-heading doc-heading-parameter">              <b><code>value</code></b>
+</h4>              (<code><span title="jax.typing.ArrayLike">ArrayLike</span></code>)
+          –
+          <div class="doc-md-description">
+            <p>The current value estimate.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+<h4 id="behavioural_modelling.learning.rescorla_wagner.asymmetric_rescorla_wagner_update_choice(outcome_key)" class="doc doc-heading doc-heading-parameter">              <b><code>outcome_key</code></b>
+</h4>              (<code><a class="autorefs autorefs-external" title="typing.Tuple" href="https://docs.python.org/3/library/typing.html#typing.Tuple">Tuple</a>[<span title="jax.typing.ArrayLike">ArrayLike</span>, <span title="jax.random.PRNGKey">PRNGKey</span>]</code>)
+          –
+          <div class="doc-md-description">
+            <p>A tuple containing the outcome and the PRNG key.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+<h4 id="behavioural_modelling.learning.rescorla_wagner.asymmetric_rescorla_wagner_update_choice(alpha_p)" class="doc doc-heading doc-heading-parameter">              <b><code>alpha_p</code></b>
+</h4>              (<code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></code>)
+          –
+          <div class="doc-md-description">
+            <p>The learning rate for positive outcomes.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+<h4 id="behavioural_modelling.learning.rescorla_wagner.asymmetric_rescorla_wagner_update_choice(alpha_n)" class="doc doc-heading doc-heading-parameter">              <b><code>alpha_n</code></b>
+</h4>              (<code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></code>)
+          –
+          <div class="doc-md-description">
+            <p>The learning rate for negative outcomes.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+<h4 id="behavioural_modelling.learning.rescorla_wagner.asymmetric_rescorla_wagner_update_choice(temperature)" class="doc doc-heading doc-heading-parameter">              <b><code>temperature</code></b>
+</h4>              (<code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></code>)
+          –
+          <div class="doc-md-description">
+            <p>The temperature parameter for softmax function.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+<h4 id="behavioural_modelling.learning.rescorla_wagner.asymmetric_rescorla_wagner_update_choice(n_actions)" class="doc doc-heading doc-heading-parameter">              <b><code>n_actions</code></b>
+</h4>              (<code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>)
+          –
+          <div class="doc-md-description">
+            <p>The number of actions to choose from.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+<h4 id="behavioural_modelling.learning.rescorla_wagner.asymmetric_rescorla_wagner_update_choice(counterfactual_value)" class="doc doc-heading doc-heading-parameter">              <b><code>counterfactual_value</code></b>
+</h4>              (<code>callable]</code>)
+          –
+          <div class="doc-md-description">
+            <p>The value
+to use for unchosen actions. This should be provided as a
+callable function that returns a value. This will have
+no effect if <code>update_all_options</code> is set to False.
+The function takes as input the values of <code>outcome</code> and <code>chosen</code>
+(i.e., the two elements of the <code>outcome_chosen</code> argument).
+By default, this assumes that outcomes are binary and sets
+the value of unchosen actions to the complement of the value
+of chosen actions.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+<h4 id="behavioural_modelling.learning.rescorla_wagner.asymmetric_rescorla_wagner_update_choice(update_all_options)" class="doc doc-heading doc-heading-parameter">              <b><code>update_all_options</code></b>
+</h4>              (<code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>)
+          –
+          <div class="doc-md-description">
+            <p>Whether to update the value
+estimates for all options, regardless of whether they were</p>
+          </div>
+        </li>
+    </ul>
+
+
+<p><span class="doc-section-title">Returns:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+              <code><span title="jax.Array">Array</span></code>
+          –
+          <div class="doc-md-description">
+            <p>Tuple[jax.Array, Tuple[jax.Array, jax.Array, int,
+jax.Array]]:
+- updated_value (jax.Array): The updated value estimate.
+- output_tuple (Tuple[jax.Array, jax.Array, int,
+    jax.Array]):
+    - value (jax.Array): The original value estimate.
+    - choice_p (jax.Array): The choice probabilities.
+    - choice (int): The chosen action.
+    - choice_array (jax.Array): The chosen action in one-hot
+        format.</p>
+          </div>
+        </li>
+    </ul>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="behavioural_modelling.learning.rescorla_wagner.asymmetric_rescorla_wagner_update_choice_sticky" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <span class="doc doc-object-name doc-attribute-name">asymmetric_rescorla_wagner_update_choice_sticky</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-module-attribute"><code>module-attribute</code></small>
+  </span>
+
+</h3>
+<div class="doc-signature highlight"><pre><span></span><code><span class="n">asymmetric_rescorla_wagner_update_choice_sticky</span><span class="p">:</span> <span class="n"><span title="jax.Array">Array</span></span> <span class="o">=</span> <span class="n"><span title="jax.jit">jit</span></span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" title="behavioural_modelling.learning.rescorla_wagner.asymmetric_rescorla_wagner_update_choice_sticky" href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_rescorla_wagner_update_choice_sticky">asymmetric_rescorla_wagner_update_choice_sticky</a></span><span class="p">,</span> <span class="n"><span title="jax.jit(static_argnums)">static_argnums</span></span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">))</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Updates the value estimate using the asymmetric Rescorla-Wagner
+algorithm, and chooses an option based on the softmax function.</p>
+<p>Incorporates additional choice stickiness parameter, such that
+the probability of choosing the same option as the previous trial
+is increased (or decreased if the value is negative).</p>
+<p>See <code>asymmetric_rescorla_wagner_update</code> for details on the learning
+rule.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+<h4 id="behavioural_modelling.learning.rescorla_wagner.asymmetric_rescorla_wagner_update_choice_sticky(value_choice)" class="doc doc-heading doc-heading-parameter">              <b><code>value_choice</code></b>
+</h4>              (<code><a class="autorefs autorefs-external" title="typing.Tuple" href="https://docs.python.org/3/library/typing.html#typing.Tuple">Tuple</a>[<span title="jax.typing.ArrayLike">ArrayLike</span>, <span title="jax.typing.ArrayLike">ArrayLike</span>]</code>)
+          –
+          <div class="doc-md-description">
+            <p>A tuple containing the current value estimate and the previous
+choice. The previous choice should be a one-hot encoded array
+of shape (n_actions,) where 1 indicates the chosen action and
+0 indicates the unchosen actions.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+<h4 id="behavioural_modelling.learning.rescorla_wagner.asymmetric_rescorla_wagner_update_choice_sticky(outcome_key)" class="doc doc-heading doc-heading-parameter">              <b><code>outcome_key</code></b>
+</h4>              (<code><a class="autorefs autorefs-external" title="typing.Tuple" href="https://docs.python.org/3/library/typing.html#typing.Tuple">Tuple</a>[<span title="jax.typing.ArrayLike">ArrayLike</span>, <span title="jax.random.PRNGKey">PRNGKey</span>]</code>)
+          –
+          <div class="doc-md-description">
+            <p>A tuple containing the outcome and the PRNG key.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+<h4 id="behavioural_modelling.learning.rescorla_wagner.asymmetric_rescorla_wagner_update_choice_sticky(alpha_p)" class="doc doc-heading doc-heading-parameter">              <b><code>alpha_p</code></b>
+</h4>              (<code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></code>)
+          –
+          <div class="doc-md-description">
+            <p>The learning rate for positive outcomes.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+<h4 id="behavioural_modelling.learning.rescorla_wagner.asymmetric_rescorla_wagner_update_choice_sticky(alpha_n)" class="doc doc-heading doc-heading-parameter">              <b><code>alpha_n</code></b>
+</h4>              (<code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></code>)
+          –
+          <div class="doc-md-description">
+            <p>The learning rate for negative outcomes.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+<h4 id="behavioural_modelling.learning.rescorla_wagner.asymmetric_rescorla_wagner_update_choice_sticky(temperature)" class="doc doc-heading doc-heading-parameter">              <b><code>temperature</code></b>
+</h4>              (<code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></code>)
+          –
+          <div class="doc-md-description">
+            <p>The temperature parameter for softmax function.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+<h4 id="behavioural_modelling.learning.rescorla_wagner.asymmetric_rescorla_wagner_update_choice_sticky(stickiness)" class="doc doc-heading doc-heading-parameter">              <b><code>stickiness</code></b>
+</h4>              (<code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></code>)
+          –
+          <div class="doc-md-description">
+            <p>The stickiness parameter for softmax function.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+<h4 id="behavioural_modelling.learning.rescorla_wagner.asymmetric_rescorla_wagner_update_choice_sticky(n_actions)" class="doc doc-heading doc-heading-parameter">              <b><code>n_actions</code></b>
+</h4>              (<code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>)
+          –
+          <div class="doc-md-description">
+            <p>The number of actions to choose from.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+<h4 id="behavioural_modelling.learning.rescorla_wagner.asymmetric_rescorla_wagner_update_choice_sticky(counterfactual_value)" class="doc doc-heading doc-heading-parameter">              <b><code>counterfactual_value</code></b>
+</h4>              (<code>callable]</code>)
+          –
+          <div class="doc-md-description">
+            <p>The value
+to use for unchosen actions. This should be provided as a
+callable function that returns a value. This will have
+no effect if <code>update_all_options</code> is set to False.
+The function takes as input the values of <code>outcome</code> and <code>chosen</code>
+(i.e., the two elements of the <code>outcome_chosen</code> argument).
+Defaults to <code>lambda x, y: (1 - x) * (1 - y)</code>, which assumes
+outcomes are binary (0 or 1), and sets the value of unchosen
+actions to complement the value of chosen actions (i.e.,
+a chosen value of 1 will set the unchosen value to 0 and
+vice versa).</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+<h4 id="behavioural_modelling.learning.rescorla_wagner.asymmetric_rescorla_wagner_update_choice_sticky(update_all_options)" class="doc doc-heading doc-heading-parameter">              <b><code>update_all_options</code></b>
+</h4>              (<code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>)
+          –
+          <div class="doc-md-description">
+            <p>Whether to update the value
+estimates for all options, regardless of whether they were</p>
+          </div>
+        </li>
+    </ul>
+
+
+<p><span class="doc-section-title">Returns:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+              <code><span title="jax.Array">Array</span></code>
+          –
+          <div class="doc-md-description">
+            <p>Tuple[jax.Array, Tuple[jax.Array, jax.Array, int,
+jax.Array]]:
+- updated_value (jax.Array): The updated value estimate.
+- output_tuple (Tuple[jax.Array, jax.Array, int,
+    jax.Array]):
+    - value (jax.Array): The original value estimate.
+    - choice_p (jax.Array): The choice probabilities.
+    - choice (int): The chosen action.
+    - choice_array (jax.Array): The chosen action in one-hot
+        format.</p>
+          </div>
+        </li>
+    </ul>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="behavioural_modelling.learning.rescorla_wagner.asymmetric_volatile_dynamic_rescorla_wagner_update_choice" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <span class="doc doc-object-name doc-attribute-name">asymmetric_volatile_dynamic_rescorla_wagner_update_choice</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-module-attribute"><code>module-attribute</code></small>
+  </span>
+
+</h3>
+<div class="doc-signature highlight"><pre><span></span><code><span class="n">asymmetric_volatile_dynamic_rescorla_wagner_update_choice</span><span class="p">:</span> <span class="n"><span title="jax.Array">Array</span></span> <span class="o">=</span> <span class="n"><span title="jax.jit">jit</span></span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" title="behavioural_modelling.learning.rescorla_wagner.asymmetric_volatile_dynamic_rescorla_wagner_update_choice" href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_volatile_dynamic_rescorla_wagner_update_choice">asymmetric_volatile_dynamic_rescorla_wagner_update_choice</a></span><span class="p">,</span> <span class="n"><span title="jax.jit(static_argnums)">static_argnums</span></span><span class="o">=</span><span class="p">(</span><span class="mi">7</span><span class="p">,))</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Updates the value estimate using a variant of the Rescorla-Wagner
+learning rule that adjusts learning rate based on volatility
+and prediction error sign, and chooses an option based on the softmax
+function.</p>
+<p>Note that learning rates for this function are transformed using a
+sigmoid function to ensure they are between 0 and 1. The raw
+parameter values supplied to the function must therefore be
+unbounded.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+<h4 id="behavioural_modelling.learning.rescorla_wagner.asymmetric_volatile_dynamic_rescorla_wagner_update_choice(value)" class="doc doc-heading doc-heading-parameter">              <b><code>value</code></b>
+</h4>              (<code><span title="jax.typing.ArrayLike">ArrayLike</span></code>)
+          –
+          <div class="doc-md-description">
+            <p>The current value estimate.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+<h4 id="behavioural_modelling.learning.rescorla_wagner.asymmetric_volatile_dynamic_rescorla_wagner_update_choice(alpha_base)" class="doc doc-heading doc-heading-parameter">              <b><code>alpha_base</code></b>
+</h4>              (<code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></code>)
+          –
+          <div class="doc-md-description">
+            <p>The base learning rate.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+<h4 id="behavioural_modelling.learning.rescorla_wagner.asymmetric_volatile_dynamic_rescorla_wagner_update_choice(alpha_volatility)" class="doc doc-heading doc-heading-parameter">              <b><code>alpha_volatility</code></b>
+</h4>              (<code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></code>)
+          –
+          <div class="doc-md-description">
+            <p>The learning rate adjustment for volatile
+outcomes.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+<h4 id="behavioural_modelling.learning.rescorla_wagner.asymmetric_volatile_dynamic_rescorla_wagner_update_choice(alpha_pos_neg)" class="doc doc-heading doc-heading-parameter">              <b><code>alpha_pos_neg</code></b>
+</h4>              (<code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></code>)
+          –
+          <div class="doc-md-description">
+            <p>The learning rate adjustment for positive and
+negative prediction errors.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+<h4 id="behavioural_modelling.learning.rescorla_wagner.asymmetric_volatile_dynamic_rescorla_wagner_update_choice(alpha_interaction)" class="doc doc-heading doc-heading-parameter">              <b><code>alpha_interaction</code></b>
+</h4>              (<code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></code>)
+          –
+          <div class="doc-md-description">
+            <p>The learning rate adjustment for the
+interaction between volatility and prediction error sign.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+<h4 id="behavioural_modelling.learning.rescorla_wagner.asymmetric_volatile_dynamic_rescorla_wagner_update_choice(temperature)" class="doc doc-heading doc-heading-parameter">              <b><code>temperature</code></b>
+</h4>              (<code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></code>)
+          –
+          <div class="doc-md-description">
+            <p>The temperature parameter for softmax function.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+<h4 id="behavioural_modelling.learning.rescorla_wagner.asymmetric_volatile_dynamic_rescorla_wagner_update_choice(n_actions)" class="doc doc-heading doc-heading-parameter">              <b><code>n_actions</code></b>
+</h4>              (<code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>)
+          –
+          <div class="doc-md-description">
+            <p>The number of actions to choose from.</p>
+          </div>
+        </li>
+    </ul>
+
+
+<p><span class="doc-section-title">Returns:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+              <code><span title="jax.Array">Array</span></code>
+          –
+          <div class="doc-md-description">
+            <p>Tuple[jax.Array, Tuple[jax.typing.ArrayLike, jax.Array, int,
+jax.Array]]:
+- updated_value (jax.Array): The updated value estimate.
+- output_tuple (Tuple[jax.Array, jax.Array, int,
+    jax.Array]):
+    - value (jax.Array): The original value estimate.
+    - choice_p (jax.Array): The choice probabilities.
+    - choice (int): The chosen action.
+    - choice_array (jax.Array): The chosen action in one-hot
+        format.</p>
+          </div>
+        </li>
+    </ul>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="behavioural_modelling.learning.rescorla_wagner.asymmetric_volatile_rescorla_wagner_single_value_update_choice" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-attribute"></code>            <span class="doc doc-object-name doc-attribute-name">asymmetric_volatile_rescorla_wagner_single_value_update_choice</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-module-attribute"><code>module-attribute</code></small>
+  </span>
+
+</h3>
+<div class="doc-signature highlight"><pre><span></span><code><span class="n">asymmetric_volatile_rescorla_wagner_single_value_update_choice</span><span class="p">:</span> <span class="n"><span title="jax.Array">Array</span></span> <span class="o">=</span> <span class="n"><span title="jax.jit">jit</span></span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" title="behavioural_modelling.learning.rescorla_wagner.asymmetric_volatile_rescorla_wagner_single_value_update_choice" href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_volatile_rescorla_wagner_single_value_update_choice">asymmetric_volatile_rescorla_wagner_single_value_update_choice</a></span><span class="p">)</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Updates the value estimate using the asymmetric volatile dynamic
+Rescorla-Wagner algorithm, and chooses an option based on the softmax
+function.</p>
+<p>This version of the function is designed for cases where the a single
+value is being learnt, and this value is used to determine which of
+two options to choose. In practice, the value of option 1 is learnt,
+and the value of option 2 is set to 1 - value. This is appropriate
+for cases where the value of one option is the complement of the other.</p>
+<p>Note that learning rates for this function are transformed using a
+sigmoid function to ensure they are between 0 and 1. The raw
+parameter values supplied to the function must therefore be
+unbounded.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+<h4 id="behavioural_modelling.learning.rescorla_wagner.asymmetric_volatile_rescorla_wagner_single_value_update_choice(value)" class="doc doc-heading doc-heading-parameter">              <b><code>value</code></b>
+</h4>              (<code><span title="jax.typing.ArrayLike">ArrayLike</span></code>)
+          –
+          <div class="doc-md-description">
+            <p>The current value estimate.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+<h4 id="behavioural_modelling.learning.rescorla_wagner.asymmetric_volatile_rescorla_wagner_single_value_update_choice(alpha_base)" class="doc doc-heading doc-heading-parameter">              <b><code>alpha_base</code></b>
+</h4>              (<code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></code>)
+          –
+          <div class="doc-md-description">
+            <p>The base learning rate.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+<h4 id="behavioural_modelling.learning.rescorla_wagner.asymmetric_volatile_rescorla_wagner_single_value_update_choice(alpha_volatility)" class="doc doc-heading doc-heading-parameter">              <b><code>alpha_volatility</code></b>
+</h4>              (<code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></code>)
+          –
+          <div class="doc-md-description">
+            <p>The learning rate adjustment for volatile
+outcomes.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+<h4 id="behavioural_modelling.learning.rescorla_wagner.asymmetric_volatile_rescorla_wagner_single_value_update_choice(alpha_pos_neg)" class="doc doc-heading doc-heading-parameter">              <b><code>alpha_pos_neg</code></b>
+</h4>              (<code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></code>)
+          –
+          <div class="doc-md-description">
+            <p>The learning rate adjustment for positive and
+negative prediction errors.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+<h4 id="behavioural_modelling.learning.rescorla_wagner.asymmetric_volatile_rescorla_wagner_single_value_update_choice(alpha_interaction)" class="doc doc-heading doc-heading-parameter">              <b><code>alpha_interaction</code></b>
+</h4>              (<code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></code>)
+          –
+          <div class="doc-md-description">
+            <p>The learning rate adjustment for the
+interaction between volatility and prediction error sign.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+<h4 id="behavioural_modelling.learning.rescorla_wagner.asymmetric_volatile_rescorla_wagner_single_value_update_choice(temperature)" class="doc doc-heading doc-heading-parameter">              <b><code>temperature</code></b>
+</h4>              (<code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></code>)
+          –
+          <div class="doc-md-description">
+            <p>The temperature parameter for softmax function.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+<h4 id="behavioural_modelling.learning.rescorla_wagner.asymmetric_volatile_rescorla_wagner_single_value_update_choice(n_actions)" class="doc doc-heading doc-heading-parameter">              <b><code>n_actions</code></b>
+</h4>              (<code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>)
+          –
+          <div class="doc-md-description">
+            <p>The number of actions to choose from.</p>
+          </div>
+        </li>
+    </ul>
+    </div>
+
+</div>
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="behavioural_modelling.learning.rescorla_wagner.asymmetric_volatile_rescorla_wagner_update" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-function"></code>            <span class="doc doc-object-name doc-function-name">asymmetric_volatile_rescorla_wagner_update</span>
+
+
+</h3>
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">asymmetric_volatile_rescorla_wagner_update</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_volatile_rescorla_wagner_update(value)">value</a></span><span class="p">:</span> <span class="n"><span title="jax.typing.ArrayLike">ArrayLike</span></span><span class="p">,</span> <span class="n">outcome_chosen_volatility</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Tuple" href="https://docs.python.org/3/library/typing.html#typing.Tuple">Tuple</a></span><span class="p">[</span><span class="n"><span title="jax.typing.ArrayLike">ArrayLike</span></span><span class="p">,</span> <span class="n"><span title="jax.typing.ArrayLike">ArrayLike</span></span><span class="p">,</span> <span class="n"><span title="jax.typing.ArrayLike">ArrayLike</span></span><span class="p">],</span> <span class="n"><a class="autorefs autorefs-internal" href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_volatile_rescorla_wagner_update(alpha_base)">alpha_base</a></span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_volatile_rescorla_wagner_update(alpha_volatility)">alpha_volatility</a></span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_volatile_rescorla_wagner_update(alpha_pos_neg)">alpha_pos_neg</a></span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" href="#behavioural_modelling.learning.rescorla_wagner.asymmetric_volatile_rescorla_wagner_update(alpha_interaction)">alpha_interaction</a></span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Tuple" href="https://docs.python.org/3/library/typing.html#typing.Tuple">Tuple</a></span><span class="p">[</span><span class="n"><span title="jax.typing.ArrayLike">ArrayLike</span></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Tuple" href="https://docs.python.org/3/library/typing.html#typing.Tuple">Tuple</a></span><span class="p">[</span><span class="n"><span title="jax.typing.ArrayLike">ArrayLike</span></span><span class="p">,</span> <span class="n"><span title="jax.typing.ArrayLike">ArrayLike</span></span><span class="p">]]</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Updates the estimated value of a state or action using a variant
+of the Rescorla-Wagner learning rule that incorporates adjusting
+the learning rate based on both volatility and prediction error sign.</p>
+<p>Note that learning rates for this function are transformed using a
+sigmoid function to ensure they are between 0 and 1. The raw
+parameter values supplied to the function must therefore be
+unbounded.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+<h4 id="behavioural_modelling.learning.rescorla_wagner.asymmetric_volatile_rescorla_wagner_update(value)" class="doc doc-heading doc-heading-parameter">              <b><code>value</code></b>
+</h4>              (<code><span title="jax.typing.ArrayLike">ArrayLike</span></code>)
+          –
+          <div class="doc-md-description">
+            <p>The current estimated value of a
+state or action.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+<h4 id="behavioural_modelling.learning.rescorla_wagner.asymmetric_volatile_rescorla_wagner_update(alpha_base)" class="doc doc-heading doc-heading-parameter">              <b><code>alpha_base</code></b>
+</h4>              (<code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></code>)
+          –
+          <div class="doc-md-description">
+            <p>The base learning rate.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+<h4 id="behavioural_modelling.learning.rescorla_wagner.asymmetric_volatile_rescorla_wagner_update(alpha_volatility)" class="doc doc-heading doc-heading-parameter">              <b><code>alpha_volatility</code></b>
+</h4>              (<code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></code>)
+          –
+          <div class="doc-md-description">
+            <p>The learning rate adjustment for volatile
+outcomes.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+<h4 id="behavioural_modelling.learning.rescorla_wagner.asymmetric_volatile_rescorla_wagner_update(alpha_pos_neg)" class="doc doc-heading doc-heading-parameter">              <b><code>alpha_pos_neg</code></b>
+</h4>              (<code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></code>)
+          –
+          <div class="doc-md-description">
+            <p>The learning rate adjustment for positive and
+negative prediction errors.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+<h4 id="behavioural_modelling.learning.rescorla_wagner.asymmetric_volatile_rescorla_wagner_update(alpha_interaction)" class="doc doc-heading doc-heading-parameter">              <b><code>alpha_interaction</code></b>
+</h4>              (<code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></code>)
+          –
+          <div class="doc-md-description">
+            <p>The learning rate adjustment for the
+interaction between volatility and prediction error sign.</p>
+          </div>
+        </li>
+    </ul>
+
+
+<p><span class="doc-section-title">Returns:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+              <code><a class="autorefs autorefs-external" title="typing.Tuple" href="https://docs.python.org/3/library/typing.html#typing.Tuple">Tuple</a>[<span title="jax.typing.ArrayLike">ArrayLike</span>, <a class="autorefs autorefs-external" title="typing.Tuple" href="https://docs.python.org/3/library/typing.html#typing.Tuple">Tuple</a>[<span title="jax.typing.ArrayLike">ArrayLike</span>, <span title="jax.typing.ArrayLike">ArrayLike</span>]]</code>
+          –
+          <div class="doc-md-description">
+            <p>Tuple[jax.typing.ArrayLike, Tuple[jax.typing.ArrayLike,
+jax.typing.ArrayLike]]:
+- updated_value (jax.typing.ArrayLike): The updated value estimate.
+- output_tuple (Tuple[jax.typing.ArrayLike, jax.typing.ArrayLike]):
+    - value (jax.typing.ArrayLike): The original value estimate.
+    - prediction_error (jax.typing.ArrayLike): The prediction
+      error.</p>
+          </div>
+        </li>
+    </ul>
+
+            <details class="quote">
+              <summary>Source code in <code>behavioural_modelling/learning/rescorla_wagner.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">313</span>
+<span class="normal">314</span>
+<span class="normal">315</span>
+<span class="normal">316</span>
+<span class="normal">317</span>
+<span class="normal">318</span>
+<span class="normal">319</span>
+<span class="normal">320</span>
+<span class="normal">321</span>
+<span class="normal">322</span>
+<span class="normal">323</span>
+<span class="normal">324</span>
+<span class="normal">325</span>
+<span class="normal">326</span>
+<span class="normal">327</span>
+<span class="normal">328</span>
+<span class="normal">329</span>
+<span class="normal">330</span>
+<span class="normal">331</span>
+<span class="normal">332</span>
+<span class="normal">333</span>
+<span class="normal">334</span>
+<span class="normal">335</span>
+<span class="normal">336</span>
+<span class="normal">337</span>
+<span class="normal">338</span>
+<span class="normal">339</span>
+<span class="normal">340</span>
+<span class="normal">341</span>
+<span class="normal">342</span>
+<span class="normal">343</span>
+<span class="normal">344</span>
+<span class="normal">345</span>
+<span class="normal">346</span>
+<span class="normal">347</span>
+<span class="normal">348</span>
+<span class="normal">349</span>
+<span class="normal">350</span>
+<span class="normal">351</span>
+<span class="normal">352</span>
+<span class="normal">353</span>
+<span class="normal">354</span>
+<span class="normal">355</span>
+<span class="normal">356</span>
+<span class="normal">357</span>
+<span class="normal">358</span>
+<span class="normal">359</span>
+<span class="normal">360</span>
+<span class="normal">361</span>
+<span class="normal">362</span>
+<span class="normal">363</span>
+<span class="normal">364</span>
+<span class="normal">365</span>
+<span class="normal">366</span>
+<span class="normal">367</span>
+<span class="normal">368</span>
+<span class="normal">369</span>
+<span class="normal">370</span>
+<span class="normal">371</span>
+<span class="normal">372</span>
+<span class="normal">373</span>
+<span class="normal">374</span>
+<span class="normal">375</span>
+<span class="normal">376</span>
+<span class="normal">377</span>
+<span class="normal">378</span>
+<span class="normal">379</span>
+<span class="normal">380</span>
+<span class="normal">381</span>
+<span class="normal">382</span>
+<span class="normal">383</span>
+<span class="normal">384</span>
+<span class="normal">385</span>
+<span class="normal">386</span>
+<span class="normal">387</span>
+<span class="normal">388</span>
+<span class="normal">389</span>
+<span class="normal">390</span>
+<span class="normal">391</span>
+<span class="normal">392</span>
+<span class="normal">393</span>
+<span class="normal">394</span>
+<span class="normal">395</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@jax</span><span class="o">.</span><span class="n">jit</span>
+<span class="k">def</span> <span class="nf">asymmetric_volatile_rescorla_wagner_update</span><span class="p">(</span>
+    <span class="n">value</span><span class="p">:</span> <span class="n">jax</span><span class="o">.</span><span class="n">typing</span><span class="o">.</span><span class="n">ArrayLike</span><span class="p">,</span>
+    <span class="n">outcome_chosen_volatility</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span>
+        <span class="n">jax</span><span class="o">.</span><span class="n">typing</span><span class="o">.</span><span class="n">ArrayLike</span><span class="p">,</span>
+        <span class="n">jax</span><span class="o">.</span><span class="n">typing</span><span class="o">.</span><span class="n">ArrayLike</span><span class="p">,</span>
+        <span class="n">jax</span><span class="o">.</span><span class="n">typing</span><span class="o">.</span><span class="n">ArrayLike</span><span class="p">,</span>
+    <span class="p">],</span>
+    <span class="n">alpha_base</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">alpha_volatility</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">alpha_pos_neg</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">alpha_interaction</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span>
+    <span class="n">jax</span><span class="o">.</span><span class="n">typing</span><span class="o">.</span><span class="n">ArrayLike</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">jax</span><span class="o">.</span><span class="n">typing</span><span class="o">.</span><span class="n">ArrayLike</span><span class="p">,</span> <span class="n">jax</span><span class="o">.</span><span class="n">typing</span><span class="o">.</span><span class="n">ArrayLike</span><span class="p">]</span>
+<span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Updates the estimated value of a state or action using a variant</span>
+<span class="sd">    of the Rescorla-Wagner learning rule that incorporates adjusting</span>
+<span class="sd">    the learning rate based on both volatility and prediction error sign.</span>
+
+<span class="sd">    Note that learning rates for this function are transformed using a</span>
+<span class="sd">    sigmoid function to ensure they are between 0 and 1. The raw</span>
+<span class="sd">    parameter values supplied to the function must therefore be</span>
+<span class="sd">    unbounded.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        value (jax.typing.ArrayLike): The current estimated value of a</span>
+<span class="sd">            state or action.</span>
+<span class="sd">        outcome_chosen_volatility (Tuple[jax.typing.ArrayLike, jax.typing.ArrayLike,</span>
+<span class="sd">            jax.typing.ArrayLike]): A tuple containing the outcome, the chosen</span>
+<span class="sd">            action, and the volatility indicator. The outcome is a float or an</span>
+<span class="sd">            array (e.g., for a single outcome or multiple outcomes). The chosen</span>
+<span class="sd">            action is a one-hot encoded array of shape (n_actions,) where 1</span>
+<span class="sd">            indicates the chosen action and 0 indicates the unchosen actions.</span>
+<span class="sd">            The volatility indicator is a binary value that indicates whether</span>
+<span class="sd">            the outcome is volatile (1) or stable (0).</span>
+<span class="sd">        alpha_base (float): The base learning rate.</span>
+<span class="sd">        alpha_volatility (float): The learning rate adjustment for volatile</span>
+<span class="sd">            outcomes.</span>
+<span class="sd">        alpha_pos_neg (float): The learning rate adjustment for positive and</span>
+<span class="sd">            negative prediction errors.</span>
+<span class="sd">        alpha_interaction (float): The learning rate adjustment for the</span>
+<span class="sd">            interaction between volatility and prediction error sign.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Tuple[jax.typing.ArrayLike, Tuple[jax.typing.ArrayLike,</span>
+<span class="sd">            jax.typing.ArrayLike]]:</span>
+<span class="sd">            - updated_value (jax.typing.ArrayLike): The updated value estimate.</span>
+<span class="sd">            - output_tuple (Tuple[jax.typing.ArrayLike, jax.typing.ArrayLike]):</span>
+<span class="sd">                - value (jax.typing.ArrayLike): The original value estimate.</span>
+<span class="sd">                - prediction_error (jax.typing.ArrayLike): The prediction</span>
+<span class="sd">                  error.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Unpack the outcome and the chosen action</span>
+    <span class="n">outcome</span><span class="p">,</span> <span class="n">chosen</span><span class="p">,</span> <span class="n">volatility_indicator</span> <span class="o">=</span> <span class="n">outcome_chosen_volatility</span>
+
+    <span class="c1"># Calculate the prediction error</span>
+    <span class="n">prediction_error</span> <span class="o">=</span> <span class="n">outcome</span> <span class="o">-</span> <span class="n">value</span>
+
+    <span class="c1"># Set prediction error to 0 for unchosen actions</span>
+    <span class="n">prediction_error</span> <span class="o">=</span> <span class="n">prediction_error</span> <span class="o">*</span> <span class="n">chosen</span>
+
+    <span class="c1"># Determine whether the error is positive (1) or negative (-1)</span>
+    <span class="n">PE_sign</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">prediction_error</span><span class="p">)</span>
+
+    <span class="c1"># Compute interaction term (volatility_indicator * error_sign)</span>
+    <span class="n">interaction_term</span> <span class="o">=</span> <span class="n">volatility_indicator</span> <span class="o">*</span> <span class="n">PE_sign</span>
+
+    <span class="c1"># Compute the dynamic learning rate using base, volatility, and interaction terms</span>
+    <span class="c1"># Remember we can&#39;t use if else statements here because JAX doesn&#39;t tolerate them</span>
+    <span class="c1"># Use adjusted learning rates for positive/negative prediction errors</span>
+    <span class="n">alpha_t</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">sigmoid</span><span class="p">(</span>
+        <span class="n">alpha_base</span>
+        <span class="o">+</span> <span class="n">alpha_volatility</span> <span class="o">*</span> <span class="n">volatility_indicator</span>
+        <span class="o">+</span> <span class="n">alpha_pos_neg</span> <span class="o">*</span> <span class="n">PE_sign</span>
+        <span class="o">+</span> <span class="n">alpha_interaction</span> <span class="o">*</span> <span class="n">interaction_term</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Update the value</span>
+    <span class="n">updated_value</span> <span class="o">=</span> <span class="n">value</span> <span class="o">+</span> <span class="n">alpha_t</span> <span class="o">*</span> <span class="n">prediction_error</span>
+
+    <span class="k">return</span> <span class="n">updated_value</span><span class="p">,</span> <span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">prediction_error</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="behavioural_modelling.learning.rescorla_wagner.complement_counterfactual" class="doc doc-heading">
+<code class="doc-symbol doc-symbol-heading doc-symbol-function"></code>            <span class="doc doc-object-name doc-function-name">complement_counterfactual</span>
+
+
+</h3>
+<div class="doc-signature highlight"><pre><span></span><code><span class="nf">complement_counterfactual</span><span class="p">(</span><span class="n"><a class="autorefs autorefs-internal" href="#behavioural_modelling.learning.rescorla_wagner.complement_counterfactual(reward)">reward</a></span><span class="p">,</span> <span class="n"><a class="autorefs autorefs-internal" href="#behavioural_modelling.learning.rescorla_wagner.complement_counterfactual(chosen)">chosen</a></span><span class="p">)</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+
+        <p>Counterfactual function that sets the value of unchosen actions to the
+complement of the value of chosen actions.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+<h4 id="behavioural_modelling.learning.rescorla_wagner.complement_counterfactual(reward)" class="doc doc-heading doc-heading-parameter">              <b><code>reward</code></b>
+</h4>              (<code><span title="jax.typing.ArrayLike">ArrayLike</span></code>)
+          –
+          <div class="doc-md-description">
+            <p>The reward received.</p>
+          </div>
+        </li>
+        <li class="doc-section-item field-body">
+<h4 id="behavioural_modelling.learning.rescorla_wagner.complement_counterfactual(chosen)" class="doc doc-heading doc-heading-parameter">              <b><code>chosen</code></b>
+</h4>              (<code><span title="jax.typing.ArrayLike">ArrayLike</span></code>)
+          –
+          <div class="doc-md-description">
+            <p>A binary array indicating which
+action(s) were chosen.</p>
+          </div>
+        </li>
+    </ul>
+
+
+<p><span class="doc-section-title">Returns:</span></p>
+    <ul>
+        <li class="doc-section-item field-body">
+          –
+          <div class="doc-md-description">
+            <p>jax.typing.ArrayLike: The counterfactual value.</p>
+          </div>
+        </li>
+    </ul>
+
+            <details class="quote">
+              <summary>Source code in <code>behavioural_modelling/learning/rescorla_wagner.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span>
+<span class="normal">19</span>
+<span class="normal">20</span>
+<span class="normal">21</span>
+<span class="normal">22</span>
+<span class="normal">23</span>
+<span class="normal">24</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">complement_counterfactual</span><span class="p">(</span><span class="n">reward</span><span class="p">,</span> <span class="n">chosen</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Counterfactual function that sets the value of unchosen actions to the</span>
+<span class="sd">    complement of the value of chosen actions.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        reward (jax.typing.ArrayLike): The reward received.</span>
+<span class="sd">        chosen (jax.typing.ArrayLike): A binary array indicating which</span>
+<span class="sd">            action(s) were chosen.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        jax.typing.ArrayLike: The counterfactual value.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">jnp</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
+        <span class="n">chosen</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> 
+        <span class="mf">0.0</span><span class="p">,</span> 
+        <span class="mf">1.0</span> <span class="o">-</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">reward</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">chosen</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">reward</span><span class="o">.</span><span class="n">dtype</span><span class="p">))</span>
+    <span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../../..", "features": [], "search": "../../../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.1e8ae164.min.js"></script>
+      
+        <script src="../../../javascripts/mathjax.js"></script>
+      
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>
