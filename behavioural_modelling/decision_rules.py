@@ -94,12 +94,11 @@ def softmax_stickiness(
     {\\sum_{b} e^{(Q(b) + \\kappa \\cdot same(b, a_{t-1}))/\\tau}}
     $$
 
-    Where:
-        - $P(a)$ is the probability of choosing action $a$
-        - $Q(a)$ is the value of action $a$
-        - $\beta$ is the temperature parameter
-        - $\kappa$ is the stickiness parameter
-        - $same(a, a_{t-1})$ is 1 if $a$ matches the previous choice, 0 otherwise
+    - $P(a)$ is the probability of choosing action $a$
+    - $Q(a)$ is the value of action $a$
+    - $\\beta$ is the temperature parameter
+    - $\kappa$ is the stickiness parameter
+    - $same(a, a_{t-1})$ is 1 if $a$ matches the previous choice, 0 otherwise
 
     Args:
         value (ArrayLike): Array of values to apply softmax to, shape
@@ -160,21 +159,27 @@ def softmax_stickiness_inverse_temperature(
     {\\sum_{b} e^{(Q(b) + \\kappa \\cdot same(b, a_{t-1}))/\\tau}}
     $$
 
-    Where:
-    - P(a) is the probability of choosing action a
-    - Q(a) is the value of action a
-    - beta is the inverse temperature parameter
-    - kappa is the stickiness parameter
-    - same(a, a_{t-1}) is 1 if a matches the previous choice, 0 otherwise
+    - $P(a)$ is the probability of choosing action $a$
+    - $Q(a)$ is the value of action $a$
+    - $\\beta$ is the inverse temperature parameter
+    - $\kappa$ is the stickiness parameter
+    - $same(a, a_{t-1})$ is 1 if $a$ matches the previous choice, 0 otherwise
 
     Args:
         value (ArrayLike): Array of values to apply softmax to, shape
-            (n_observations, n_observations). Note that this **does not**
-            account for trial-wise dependencies, so each observation is treated
-            independently. This can be useful to apply the same stickiness to
+            `(n_trials, n_bandits)`. 
+            Note that this **does not**
+            account for trial-wise dependencies, so each trial is treated
+            independently (i.e., we use precomputed choices, therefore the 
+            precomputed choice on trial `t-1` can influence the choice on 
+            trial `t`, but this altered choice likelihood on trial `t` will not
+            affect any subsequent trials since we rely on the precomputed
+            choices provided).
+            This can be useful to apply the same stickiness to
             all trials, but additional code will be required to account for
-            trial-wise dependencies (i.e., the choice on observation n-1)
-            influencing the choice on observation n).
+            trial-wise dependencies (i.e., the choice on trial `t-1`)
+            influencing the choice on trial `t`, and this subsequently
+            influencing trials `t+1` etc.).
         inverse_temperature (float, optional): Softmax inverse temperature,
             range [0, inf]. Higher values make choices more deterministic.
             Defaults to 1.0
@@ -182,7 +187,7 @@ def softmax_stickiness_inverse_temperature(
             (-inf, inf). Positive values increase probability of repeating
             choices. Defaults to 0.0
         prev_choice (ArrayLike, optional): One-hot encoded previous choices,
-            shape (n_bandits, ). Defaults to None.
+            shape (n_trials, n_bandits). Defaults to None.
 
     Returns:
         ArrayLike: Choice probabilities, shape (n_trials, n_bandits)
