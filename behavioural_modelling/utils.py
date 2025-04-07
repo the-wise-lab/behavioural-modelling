@@ -36,7 +36,7 @@ def choice_from_action_p_single(
     return choice
 
 
-choice_func_vmap = jax.vmap(choice_from_action_p_single, in_axes=(None, 0, None))
+choice_func_vmap = jax.vmap(choice_from_action_p_single, in_axes=(0, 0, None))
 
 
 @jax.jit
@@ -60,8 +60,12 @@ def choice_from_action_p(key: jax.random.PRNGKey, probs: ArrayLike, lapse: float
     # Reshape probs
     probs_reshaped = probs.reshape((-1, probs.shape[-1]))
 
+    # Split keys so that we have one for each index in the first
+    # dimension of probs
+    keys = jax.random.split(key, probs_reshaped.shape[0])
+
     # Get choices
-    choices = choice_func_vmap(key, probs_reshaped, lapse)
+    choices = choice_func_vmap(keys, probs_reshaped, lapse)
 
     # Reshape choices
     choices = choices.reshape(probs.shape[:-1])
