@@ -108,7 +108,8 @@ def test_softmax_inverse_temperature():
     assert jnp.allclose(softmax_probs.sum(axis=2), 1)
 
     # Check that probabilities are monotonically increasing with value
-    assert jnp.all(jnp.diff(softmax_probs[..., 0], axis=-1) >= 0)
+    # (allowing float32 rounding once probabilities saturate at 0 or 1)
+    assert jnp.all(jnp.diff(softmax_probs[..., 0], axis=-1) >= -1e-6)
 
     # Check that probability curves get steeper with increasing inverse temperature
     # (opposite of regular softmax temperature)

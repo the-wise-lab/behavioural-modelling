@@ -479,11 +479,14 @@ def asymmetric_volatile_rescorla_wagner_single_value_update_choice(
     Rescorla-Wagner algorithm, and chooses an option based on the softmax
     function.
 
-    This version of the function is designed for cases where the a single
+    This version of the function is designed for cases where a single
     value is being learnt, and this value is used to determine which of
     two options to choose. In practice, the value of option 1 is learnt,
     and the value of option 2 is set to 1 - value. This is appropriate
     for cases where the value of one option is the complement of the other.
+    The outcome refers to the first option (index 0). The value is updated
+    on every trial from the chosen option's prediction error, so the sign
+    used by alpha_pos_neg is +1 after a win and -1 after a loss.
 
     Note that learning rates for this function are transformed using a
     sigmoid function to ensure they are between 0 and 1. The raw
@@ -526,16 +529,22 @@ def asymmetric_volatile_rescorla_wagner_single_value_update_choice(
     choice_array = choice_array.at[choice].set(1)
 
     # Get the outcome and update the value estimate
-    updated_value, (value, prediction_error) = (
+    chosen_value = jnp.where(choice == 0, value, 1 - value)
+    chosen_outcome = jnp.where(choice == 0, outcome, 1 - outcome)
+
+    updated_chosen, (_, prediction_error) = (
         asymmetric_volatile_rescorla_wagner_update(
-            value,
-            (outcome, jnp.ones(1, dtype=jnp.int16), volatility_indicator),
+            chosen_value,
+            (chosen_outcome, jnp.ones(1, dtype=jnp.int16), volatility_indicator),
             alpha_base,
             alpha_volatility,
             alpha_pos_neg,
             alpha_interaction,
         )
     )
+
+    # Convert back to the single value for option 0
+    updated_value = jnp.where(choice == 0, updated_chosen, 1 - updated_chosen)
 
     return updated_value, (value, choice_p, choice_array, prediction_error)
 
