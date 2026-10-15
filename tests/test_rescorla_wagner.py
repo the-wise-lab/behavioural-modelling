@@ -1247,3 +1247,38 @@ def test_temperature_effect():
     high_temp_diff = jnp.abs(choice_p_high_temp[0] - choice_p_high_temp[1])
     low_temp_diff = jnp.abs(choice_p_low_temp[0] - choice_p_low_temp[1])
     assert high_temp_diff < low_temp_diff
+
+
+@pytest.mark.parametrize(
+    "value, left_safe, won",
+    [
+        (0.9, 1.0, True),   # chose left (value 0.9), left safe: win
+        (0.9, 0.0, False),  # chose left, left exploded: loss
+        (0.1, 0.0, True),   # chose right (value 0.9), left exploded so right safe: win
+        (0.1, 1.0, False),  # chose right, left safe so right exploded: loss
+    ],
+)
+def test_single_value_learning_rate_follows_the_chosen_option(value, left_safe, won):
+    """alpha_pos_neg uses the chosen option's win or loss, on either side."""
+    alpha_pos_neg = 1.0
+    updated_value, (_, _, choice_array, prediction_error) = (
+        asymmetric_volatile_rescorla_wagner_single_value_update_choice(
+            jnp.array([value]),
+            (left_safe, jax.random.PRNGKey(0), 0.0),
+            0.0,  # alpha_base
+            0.0,  # alpha_volatility
+            alpha_pos_neg,
+            0.0,  # alpha_interaction
+            0.05,  # low temperature: the higher-valued option is chosen
+        )
+    )
+    chose_left = value > 0.5
+    assert int(choice_array[0]) == int(chose_left)
+    rate = float(jax.nn.sigmoid(alpha_pos_neg if won else -alpha_pos_neg))
+    chosen_value = value if chose_left else 1 - value
+    chosen_outcome = 1.0 if won else 0.0
+    expected_chosen = chosen_value + rate * (chosen_outcome - chosen_value)
+    expected = expected_chosen if chose_left else 1 - expected_chosen
+    assert np.isclose(float(updated_value[0]), expected, atol=1e-6)
+    # The returned prediction error is the chosen option's: positive after a win.
+    assert (float(prediction_error[0]) > 0) == won
